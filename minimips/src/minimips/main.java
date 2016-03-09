@@ -102,6 +102,9 @@ public class main extends JFrame {
 		txtrOpcode.setEditable(false);
 		scrollPane_3.setViewportView(txtrOpcode);
 		
+		
+		
+		
 		JButton btnEnter = new JButton("Enter Program");
 		btnEnter.setBounds(214, 219, 124, 23);
 		btnEnter.addActionListener(new ActionListener() {
