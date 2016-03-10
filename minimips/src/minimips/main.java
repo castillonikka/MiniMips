@@ -27,6 +27,7 @@ import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
+import javax.swing.DefaultComboBoxModel;
 
 public class main extends JFrame {
 
@@ -35,7 +36,6 @@ public class main extends JFrame {
 	private JTable table_1;
 	private int[] pc;
 	private String[] code;
-	private JTextField txtLabel;
 
 	/**
 	 * Launch the application.
@@ -57,7 +57,7 @@ public class main extends JFrame {
 	 * Create the frame.
 	 */
 	public main() {
-		setTitle("Edumips ng Pinas");
+		setTitle("mH1nh1m1pSxZc");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 631, 551);
 		contentPane = new JPanel();
@@ -72,46 +72,36 @@ public class main extends JFrame {
 		panel.setToolTipText("");
 		tabbedPane.addTab("Tab 1", null, panel, null);
 		
-		JLabel label = new JLabel("Code:");
-		label.setBounds(31, 28, 29, 14);
-		
 		JLabel lblOpcode_1 = new JLabel("Opcode:");
-		lblOpcode_1.setBounds(366, 28, 124, 14);
+		lblOpcode_1.setBounds(316, 43, 124, 14);
 		
 		JLabel label_2 = new JLabel("Registers:");
-		label_2.setBounds(31, 268, 49, 14);
+		label_2.setBounds(31, 243, 49, 14);
 		
 		JLabel label_3 = new JLabel("Memory:");
-		label_3.setBounds(316, 268, 42, 14);
+		label_3.setBounds(316, 243, 42, 14);
 		
 		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(31, 288, 263, 146);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(31, 48, 307, 108);
+		scrollPane.setBounds(31, 263, 263, 146);
 		
 		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(316, 288, 263, 146);
+		scrollPane_2.setBounds(316, 263, 263, 146);
 		
 		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(366, 48, 213, 194);
-		
-		JTextPane textPane = new JTextPane();
+		scrollPane_3.setBounds(316, 68, 263, 120);
 		
 		JTextArea txtrOpcode = new JTextArea();
-		txtrOpcode.setEditable(false);
-		scrollPane_3.setViewportView(txtrOpcode);
-		
-		
-		
+		JTextArea txtrCode = new JTextArea();
 		
 		JButton btnEnter = new JButton("Enter Program");
-		btnEnter.setBounds(214, 219, 124, 23);
+		btnEnter.setBounds(102, 199, 118, 23);
 		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				//System.out.println(textPane.getText());
 				
-				code = textPane.getText().split("\\n");
+				
+				
+				code = txtrCode.getText().split("\\n");
 				txtrOpcode.setText("");
 				for (int a = 0; a < code.length; a++)
 				{
@@ -169,9 +159,6 @@ public class main extends JFrame {
 		table.setCellSelectionEnabled(true);
 		scrollPane.setViewportView(table);
 		
-		//JTextPane textPane = new JTextPane();
-		scrollPane_1.setViewportView(textPane);
-		
 		table_1 = new JTable();
 		table_1.setModel(new DefaultTableModel(
 			new Object[][] {
@@ -203,58 +190,30 @@ public class main extends JFrame {
 		scrollPane_2.setViewportView(table_1);
 		panel.setLayout(null);
 		panel.add(btnEnter);
-		panel.add(label);
-		panel.add(scrollPane_1);
 		panel.add(label_2);
 		panel.add(scrollPane);
 		panel.add(label_3);
 		panel.add(lblOpcode_1);
 		panel.add(scrollPane_3);
+		
+		
+		scrollPane_3.setViewportView(txtrOpcode);
+		txtrOpcode.setEditable(false);
 		panel.add(scrollPane_2);
 		
-		txtLabel = new JTextField();
-		txtLabel.setBounds(31, 188, 49, 20);
-		panel.add(txtLabel);
-		txtLabel.setColumns(10);
+		JLabel label = new JLabel("Code:");
+		label.setBounds(31, 43, 49, 14);
+		panel.add(label);
 		
-		JComboBox comboBox = new JComboBox();
-		comboBox.setBounds(90, 188, 65, 20);
-		panel.add(comboBox);
-		comboBox.addItem("DADDU");
-		comboBox.addItem("DMULU");
-		comboBox.addItem("DMUHU");
-		comboBox.addItem("SLT");
-		comboBox.addItem("SELEQZ");
-		comboBox.addItem("BEQC");
-		comboBox.addItem("LD");
-		comboBox.addItem("SD");
-		comboBox.addItem("DADDIU");
-		comboBox.addItem("BC");
+		JScrollPane scrollPane_1 = new JScrollPane();
+		scrollPane_1.setBounds(31, 68, 263, 120);
+		panel.add(scrollPane_1);
 		
-		JComboBox comboBox_1 = new JComboBox();
-		comboBox_1.setBounds(179, 188, 54, 20);
-		panel.add(comboBox_1);
-		comboBox_1.addItem("R1");
 		
-		JComboBox comboBox_2 = new JComboBox();
-		comboBox_2.setBounds(243, 188, 54, 20);
-		panel.add(comboBox_2);
 		
-		JComboBox comboBox_3 = new JComboBox();
-		comboBox_3.setBounds(304, 188, 54, 20);
-		panel.add(comboBox_3);
-		
-		JLabel lblInstr = new JLabel("Instr");
-		lblInstr.setBounds(90, 167, 46, 14);
-		panel.add(lblInstr);
-		
-		JLabel label_1 = new JLabel("");
-		label_1.setBounds(189, 167, 46, 14);
-		panel.add(label_1);
-		
-		JButton btnEnterProgram = new JButton("Add");
-		btnEnterProgram.setBounds(31, 219, 124, 23);
-		panel.add(btnEnterProgram);
+		scrollPane_1.setViewportView(txtrCode);
+		txtrCode.setEditable(false);
+		txtrCode.setText("Code");
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Tab 2", null, panel_1, null);
@@ -268,10 +227,10 @@ public class main extends JFrame {
 		txtrAsd.setText("asd");
 		
 		JButton btnNewButton = new JButton("Single-Step");
-		btnNewButton.setBounds(30, 376, 121, 23);
+		btnNewButton.setBounds(30, 362, 121, 23);
 		
 		JButton btnFullExecution = new JButton("Full Execution");
-		btnFullExecution.setBounds(161, 376, 115, 23);
+		btnFullExecution.setBounds(161, 362, 115, 23);
 		
 		JLabel lblPipelineMap = new JLabel("Pipeline Map:");
 		lblPipelineMap.setBounds(305, 26, 115, 14);
