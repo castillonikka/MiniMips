@@ -117,8 +117,9 @@ public class main extends JFrame {
 				{
 					System.out.println(code[a]);
 					Opcode opc = new Opcode(code[a]);
-					System.out.println("Opcode is: " + opc.generateOpcode());
-					txtrOpcode.setText(txtrOpcode.getText() + opc.generateOpcode() + "\n");
+					String outputOpc = opc.generateOpcode();
+					System.out.println("Opcode is: " + outputOpc);
+					txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 				}
 			}
 		});

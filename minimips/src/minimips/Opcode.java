@@ -114,6 +114,15 @@ public class Opcode {
 				// FIRST PARAMETER = REG
 				this.par1 = this.word.next().toString();
 				this.num1 = Character.getNumericValue(this.par1.charAt(1));
+				// if reg is from 10 to 31
+				if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+				{
+					System.out.println(Character.getNumericValue(this.par1.charAt(1)));
+					System.out.println(Character.getNumericValue(this.par1.charAt(2)));
+					int temp = Character.getNumericValue(this.par1.charAt(2));
+					this.num1 = (this.num1 * 10) + temp;
+					System.out.println(this.num1);
+				}
 				
 				// PARAMETER 1 in binary
 				String reg1 = this.convertToBinary(this.num1);
@@ -123,6 +132,15 @@ public class Opcode {
 				// SECOND PARAMETER = REG
 				this.par2 = this.word.next().toString();
 				this.num2 = Character.getNumericValue(this.par2.charAt(1));
+				// if reg is from 10 to 31
+				if (Character.getNumericValue(this.par2.charAt(2)) >= 0 && Character.getNumericValue(this.par2.charAt(2)) <= 9)
+				{
+					System.out.println(Character.getNumericValue(this.par2.charAt(1)));
+					System.out.println(Character.getNumericValue(this.par2.charAt(2)));
+					int temp = Character.getNumericValue(this.par2.charAt(2));
+					this.num2 = (this.num2 * 10) + temp;
+					System.out.println(this.num2);
+				}
 				 
 				// PARAMETER 2 in binary
 				String reg2 = this.convertToBinary(this.num2);
@@ -132,6 +150,15 @@ public class Opcode {
 				// PARAMETER 3
 				this.par3 = this.word.next().toString();
 				this.num3 = Character.getNumericValue(this.par3.charAt(1));
+				// if reg is from 10 to 31
+				if (Character.getNumericValue(this.par3.charAt(2)) >= 0 && Character.getNumericValue(this.par3.charAt(2)) <= 9)
+				{
+					System.out.println(Character.getNumericValue(this.par3.charAt(1)));
+					System.out.println(Character.getNumericValue(this.par3.charAt(2)));
+					int temp = Character.getNumericValue(this.par3.charAt(2));
+					this.num3 = (this.num3 * 10) + temp;
+					System.out.println(this.num3);
+				}
 				
 				// PARAMETER 3 in binary
 				String reg3 = this.convertToBinary(this.num3);
@@ -182,6 +209,15 @@ public class Opcode {
 				// FIRST PARAMETER = REG
 				this.par1 = word.next().toString();
 				this.num1 = Character.getNumericValue(this.par1.charAt(1));
+				// if reg is from 10 to 31
+				if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+				{
+					System.out.println(Character.getNumericValue(this.par1.charAt(1)));
+					System.out.println(Character.getNumericValue(this.par1.charAt(2)));
+					int temp = Character.getNumericValue(this.par1.charAt(2));
+					this.num1 = (this.num1 * 10) + temp;
+					System.out.println(this.num1);
+				}
 				
 				// PARAMETER 1 in binary
 				reg1 = this.convertToBinary(this.num1);
@@ -201,6 +237,15 @@ public class Opcode {
 				// SECOND PARAMETER = REG
 				this.par2 = word.next().toString();
 				this.num2 = Character.getNumericValue(this.par2.charAt(1));
+				// if reg is from 10 to 31
+				if (Character.getNumericValue(this.par2.charAt(2)) >= 0 && Character.getNumericValue(this.par2.charAt(2)) <= 9)
+				{
+					System.out.println(Character.getNumericValue(this.par2.charAt(1)));
+					System.out.println(Character.getNumericValue(this.par2.charAt(2)));
+					int temp = Character.getNumericValue(this.par2.charAt(2));
+					this.num2 = (this.num2 * 10) + temp;
+					System.out.println(this.num2);
+				}
 				
 				// PARAMETER 2 in binary
 				reg2 = this.convertToBinary(this.num2);
