@@ -93,6 +93,46 @@ public class Opcode {
 		return output;
 	}
 	
+	public int convertToNum (String par, int a)
+	{
+		int num = 0;
+			switch (par.charAt(a))
+			{
+				case '1':
+				case '2':
+				case '3':
+				case '4':
+				case '5':
+				case '6':
+				case '7':
+				case '8':
+				case '9':
+					num = Character.getNumericValue(par.charAt(a));
+					break;
+				case 'A':
+					num = 10;
+					break;
+				case 'B':
+					num = 11;
+					break;
+				case 'C':
+					num = 12;
+					break;
+				case 'D':
+					num = 13;
+					break;
+				case 'E':
+					num = 14;
+					break;
+				case 'F':
+					num = 15;
+					break;
+			}
+		
+		
+		return num;
+	}
+	
 	public String generateOpcode()
 	{
 		/*this.input = this.sc.nextLine();*/
@@ -122,11 +162,21 @@ public class Opcode {
 					int temp = Character.getNumericValue(this.par1.charAt(2));
 					this.num1 = (this.num1 * 10) + temp;
 					System.out.println(this.num1);
+					
+					// PARAMETER 1 in binary
+					String reg1 = this.convertToBinary(this.num1);
+					this.rd = this.concatZero(reg1, this.num1);
+					System.out.println("RD is " + reg1);
+				}
+				else
+				{
+					// PARAMETER 1 in binary
+					String reg1 = this.convertToBinary(this.num1);
+					this.rd = this.concatZero(reg1, this.num1);
+					System.out.println("RD is " + reg1);
 				}
 				
-				// PARAMETER 1 in binary
-				String reg1 = this.convertToBinary(this.num1);
-				this.rd = this.concatZero(reg1, this.num1);
+				
 				
 				
 				// SECOND PARAMETER = REG
@@ -140,14 +190,22 @@ public class Opcode {
 					int temp = Character.getNumericValue(this.par2.charAt(2));
 					this.num2 = (this.num2 * 10) + temp;
 					System.out.println(this.num2);
+					
+					// PARAMETER 2 in binary
+					String reg2 = this.convertToBinary(this.num2);
+					this.rs = this.concatZero(reg2, this.num2);
+					System.out.println("RS is " + reg2);
 				}
-				 
-				// PARAMETER 2 in binary
-				String reg2 = this.convertToBinary(this.num2);
-				this.rs = this.concatZero(reg2, this.num2);
+				else
+				{
+					// PARAMETER 2 in binary
+					String reg2 = this.convertToBinary(this.num2);
+					this.rs = this.concatZero(reg2, this.num2);
+					System.out.println("RS is " + reg2);
+				}
 				
 				
-				// PARAMETER 3
+				// THIRD PARAMETER = REG
 				this.par3 = this.word.next().toString();
 				this.num3 = Character.getNumericValue(this.par3.charAt(1));
 				// if reg is from 10 to 31
@@ -158,13 +216,20 @@ public class Opcode {
 					int temp = Character.getNumericValue(this.par3.charAt(2));
 					this.num3 = (this.num3 * 10) + temp;
 					System.out.println(this.num3);
+					
+					// PARAMETER 3 in binary
+					String reg3 = this.convertToBinary(this.num3);
+					this.rt = this.concatZero(reg3, this.num3);
+					System.out.println("RS is " + reg3);
 				}
-				
-				// PARAMETER 3 in binary
-				String reg3 = this.convertToBinary(this.num3);
-				this.rt = this.concatZero(reg3, this.num3);
-				
-				
+				else
+				{
+					// PARAMETER 3 in binary
+					String reg3 = this.convertToBinary(this.num3);
+					this.rt = this.concatZero(reg3, this.num3);
+					System.out.println("RS is " + reg3);
+				}
+				 
 				// OPCODE GENERATION
 				this.opc = "000000";
 				switch (inst)
@@ -220,7 +285,7 @@ public class Opcode {
 				}
 				
 				// PARAMETER 1 in binary
-				reg1 = this.convertToBinary(this.num1);
+				String reg1 = this.convertToBinary(this.num1);
 				switch (inst)
 				{
 					case "BEQC":
@@ -248,7 +313,7 @@ public class Opcode {
 				}
 				
 				// PARAMETER 2 in binary
-				reg2 = this.convertToBinary(this.num2);
+				String reg2 = this.convertToBinary(this.num2);
 				switch (inst)
 				{
 					case "BEQC":
@@ -266,7 +331,7 @@ public class Opcode {
 				if (this.inst.equals("DADDIU") || this.inst.equals("daddiu"))
 				{
 					String par3 = word.next().toString();
-					this.num3 = Character.getNumericValue(par3.charAt(0));
+					/*this.num3 = Character.getNumericValue(par3.charAt(0));
 					String imm1 = this.convertToBinary(this.num3);
 					
 					this.num4 = Character.getNumericValue(par3.charAt(1));
@@ -276,7 +341,12 @@ public class Opcode {
 					String imm3 = this.convertToBinary(this.num5);
 					
 					this.num6 = Character.getNumericValue(par3.charAt(3));
-					String imm4 = this.convertToBinary(this.num6);
+					String imm4 = this.convertToBinary(this.num6);*/
+					
+					String imm1 = this.convertToBinary(this.convertToNum(par3, 0));
+					String imm2 = this.convertToBinary(this.convertToNum(par3, 1));
+					String imm3 = this.convertToBinary(this.convertToNum(par3, 2));
+					String imm4 = this.convertToBinary(this.convertToNum(par3, 3));
 					
 					this.opc = "011001";
 					
