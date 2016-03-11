@@ -212,7 +212,6 @@ public class main extends JFrame {
 		
 		
 		scrollPane_1.setViewportView(txtrCode);
-		txtrCode.setEditable(false);
 		txtrCode.setText("Code");
 		
 		JPanel panel_1 = new JPanel();
