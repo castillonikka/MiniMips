@@ -21,6 +21,7 @@ public class Opcode {
 	private String par3;
 	private String imm;
 	private int num1, num2, num3, num4, num5, num6;
+	private char[] parameter2;
 	
 	
 	// Constructor
@@ -93,10 +94,10 @@ public class Opcode {
 		return output;
 	}
 	
-	public int convertToNum (String par, int a)
+	public int convertToNum (char a)
 	{
 		int num = 0;
-			switch (par.charAt(a))
+			switch (a)
 			{
 				case '1':
 				case '2':
@@ -107,7 +108,7 @@ public class Opcode {
 				case '7':
 				case '8':
 				case '9':
-					num = Character.getNumericValue(par.charAt(a));
+					num = Character.getNumericValue(a);
 					break;
 				case 'A':
 					num = 10;
@@ -129,7 +130,7 @@ public class Opcode {
 					break;
 			}
 		
-		
+		System.out.println(num);
 		return num;
 	}
 	
@@ -331,29 +332,21 @@ public class Opcode {
 				if (this.inst.equals("DADDIU") || this.inst.equals("daddiu"))
 				{
 					String par3 = word.next().toString();
-					/*this.num3 = Character.getNumericValue(par3.charAt(0));
-					String imm1 = this.convertToBinary(this.num3);
 					
-					this.num4 = Character.getNumericValue(par3.charAt(1));
-					String imm2 = this.convertToBinary(this.num4);
+					/*int num1 = this.convertToNum(par3.charAt(0));
+					String imm1 = this.convertToBinary(num1);
 					
-					this.num5 = Character.getNumericValue(par3.charAt(2));
-					String imm3 = this.convertToBinary(this.num5);
+					int num2 = this.convertToNum(par3.charAt(1));
+					String imm2 = this.convertToBinary(num2);
 					
-					this.num6 = Character.getNumericValue(par3.charAt(3));
-					String imm4 = this.convertToBinary(this.num6);*/
+					int num3 = this.convertToNum(par3.charAt(2));
+					String imm3 = this.convertToBinary(num3);
 					
-					String imm1 = this.convertToBinary(this.convertToNum(par3, 0));
-					String imm2 = this.convertToBinary(this.convertToNum(par3, 1));
-					String imm3 = this.convertToBinary(this.convertToNum(par3, 2));
-					String imm4 = this.convertToBinary(this.convertToNum(par3, 3));
+					int num4 = this.convertToNum(par3.charAt(3));
+					String imm4 = this.convertToBinary(num4);*/
 					
 					this.opc = "011001";
-					
-					this.imm = this.concatZero2(imm1, num3);
-					this.imm = this.imm + this.concatZero2(imm2, num4);
-					this.imm = this.imm + this.concatZero2(imm3, num5);
-					this.imm = this.imm + this.concatZero2(imm4, num6);
+					this.imm = par3;
 					
 				}
 				else
@@ -364,8 +357,10 @@ public class Opcode {
 				}
 				
 				//opcode = opc + " " + rs + " " + rt + " " + imm;
-				this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + this.imm);
-				this.opcodeHex = this.extend(this.opcodeHex);
+				/*this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + this.par3);
+				this.opcodeHex = this.extend(this.opcodeHex);*/
+				
+				this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt) + this.imm;
 				
 				break;
 				
@@ -384,8 +379,13 @@ public class Opcode {
 				
 				
 				// SECOND PARAMETER = IMMEDIATE/MEMORY (offset)
-				
-				
+				this.par2 = word.next().toString();
+				System.out.println(par2);
+				parameter2[0] = par2.charAt(0);
+				parameter2[1] = par2.charAt(1);
+				parameter2[2] = par2.charAt(2);
+				parameter2[3] = par2.charAt(3);
+				System.out.println(parameter2);
 				
 				// THIRD PARAMETER = REG (base)
 				
