@@ -107,7 +107,7 @@ public class main extends JFrame {
 				{
 					System.out.println(code[a]);
 					Opcode opc = new Opcode(code[a]);
-					String outputOpc = opc.generateOpcode();
+					String outputOpc = opc.firstWord();
 					System.out.println("Opcode is: " + outputOpc);
 					txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 				}
