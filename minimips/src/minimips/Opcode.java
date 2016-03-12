@@ -245,28 +245,37 @@ public class Opcode {
 					}
 					
 					
-					// THIRD PARAMETER = REG
-					this.par3 = this.word.next().toString();
-					String register = par3.substring(1);
-					System.out.println(register);
-					//this.num3 = Character.getNumericValue(this.par3.charAt(1));
-					int tempC = Integer.valueOf(register).intValue();
-					System.out.println("hello " + tempC);
-					
-					this.num3 = tempC;
-					if (this.num3 > 31)
+					try
+					{
+						// THIRD PARAMETER = REG
+						this.par3 = this.word.next().toString();
+						String register = par3.substring(1);
+						System.out.println(register);
+						//this.num3 = Character.getNumericValue(this.par3.charAt(1));
+						int tempC = Integer.valueOf(register).intValue();
+						System.out.println("hello " + tempC);
+						
+						this.num3 = tempC;
+						if (this.num3 > 31)
+						{
+							this.error = true;
+							this.errorMessage = "Invalid register.";
+							break;
+						}
+						else
+						{
+							System.out.println("hi " + this.num3);
+							String reg3 = this.convertToBinary(this.num3);
+							System.out.println("Register: " + reg3);
+							this.rt = this.concatZero(reg3, this.num3);
+							System.out.println("RT is " + this.rt);
+						}
+					}
+					catch (NumberFormatException e)
 					{
 						this.error = true;
-						this.errorMessage = "Invalid register.";
+						this.errorMessage = "Error!";
 						break;
-					}
-					else
-					{
-						System.out.println("hi " + this.num3);
-						String reg3 = this.convertToBinary(this.num3);
-						System.out.println("Register: " + reg3);
-						this.rt = this.concatZero(reg3, this.num3);
-						System.out.println("RT is " + this.rt);
 					}
 					 
 					// OPCODE GENERATION
@@ -537,9 +546,6 @@ public class Opcode {
 			this.inst = this.word.next().toString();
 			this.inst = this.word.next().toString();
 			System.out.println(this.inst);
-			
-			//if (this.inst.equals(""))
-			
 			this.output = this.generateOpcode(this.inst);
 			System.out.println(this.output);
 		}
