@@ -29,6 +29,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultComboBoxModel;
+import java.awt.Font;
 
 public class main extends JFrame {
 
@@ -95,7 +96,9 @@ public class main extends JFrame {
 		scrollPane_3.setBounds(316, 68, 263, 120);
 		
 		JTextArea txtrOpcode = new JTextArea();
+		txtrOpcode.setFont(new Font("Courier New", Font.PLAIN, 13));
 		JTextArea txtrCode = new JTextArea();
+		txtrCode.setFont(new Font("Courier New", Font.PLAIN, 13));
 		
 		JButton btnEnter = new JButton("Enter Program");
 		btnEnter.setBounds(102, 199, 118, 23);
