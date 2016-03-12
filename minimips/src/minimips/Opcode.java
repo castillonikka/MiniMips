@@ -205,28 +205,16 @@ public class Opcode {
 					
 					// THIRD PARAMETER = REG
 					this.par3 = this.word.next().toString();
-					this.num3 = Character.getNumericValue(this.par3.charAt(1));
-					// if reg is from 10 to 31
-					if (Character.getNumericValue(this.par3.charAt(2)) >= 0 && Character.getNumericValue(this.par3.charAt(2)) <= 9)
-					{
-						System.out.println(Character.getNumericValue(this.par3.charAt(1)));
-						System.out.println(Character.getNumericValue(this.par3.charAt(2)));
-						int temp = Character.getNumericValue(this.par3.charAt(2));
-						this.num3 = (this.num3 * 10) + temp;
-						System.out.println(this.num3);
-						
-						// PARAMETER 3 in binary
-						String reg3 = this.convertToBinary(this.num3);
-						this.rt = this.concatZero(reg3, this.num3);
-						System.out.println("RS is " + reg3);
-					}
-					else
-					{
-						// PARAMETER 3 in binary
-						String reg3 = this.convertToBinary(this.num3);
-						this.rt = this.concatZero(reg3, this.num3);
-						System.out.println("RS is " + reg3);
-					}
+					String register = par3.substring(1);
+					System.out.println(register);
+					//this.num3 = Character.getNumericValue(this.par3.charAt(1));
+					int tempC = Integer.valueOf(register).intValue();
+					System.out.println("hello " + tempC);
+					
+					this.num3 = tempC;
+					String reg3 = this.convertToBinary(this.num3);
+					this.rt = this.concatZero(reg3, this.num3);
+					System.out.println("RS is " + reg3);
 					 
 					// OPCODE GENERATION
 					this.opc = "000000";
