@@ -102,25 +102,31 @@ public class main extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//System.out.println(textPane.getText());
 				
-				pc = new int[100];
-				pcHex = new String[100];
-				
-				code = txtrCode.getText().split("\\n");
-				txtrOpcode.setText("");
-				for (int a = 0; a < code.length; a++)
+				try
 				{
-					pc[a] = 4 * a;
-					String tempBin = this.convertToBinary(pc[a]);
-					pcHex[a] = this.convertToHex(tempBin);
-					System.out.println(code[a] + "       " + pcHex[a]);
-					Opcode opc = new Opcode(code[a]);
-					String outputOpc = opc.firstWord();
-					System.out.println("Opcode is: " + outputOpc);
-					if (opc.isError() == true)
+					pc = new int[100];
+					pcHex = new String[100];
+					
+					code = txtrCode.getText().split("\\n");
+					txtrOpcode.setText("");
+					for (int a = 0; a < code.length; a++)
 					{
-						txtrOpcode.setText(opc.getErrorMessage());
+						pc[a] = 4 * a;
+						String tempBin = this.convertToBinary(pc[a]);
+						pcHex[a] = this.convertToHex(tempBin);
+						System.out.println(code[a] + "       " + pcHex[a]);
+						Opcode opc = new Opcode(code[a]);
+						String outputOpc = opc.firstWord();
+						System.out.println("Opcode is: " + outputOpc);
+						if (opc.isError() == true)
+						{
+							txtrOpcode.setText(opc.getErrorMessage());
+						}
+						else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 					}
-					else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+				} catch (StringIndexOutOfBoundsException e)
+				{
+					txtrOpcode.setText("Null input.\n");
 				}
 			}
 			
