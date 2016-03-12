@@ -195,6 +195,12 @@ public class Opcode {
 							String reg1 = this.convertToBinary(this.num1);
 							this.rd = this.concatZero(reg1, this.num1);
 							System.out.println("RD is " + rd);
+							if (this.num1 > 31)
+							{
+								this.error = true;
+								this.errorMessage = "Invalid register.";
+								break;
+							}
 						}
 						else
 						{
@@ -223,6 +229,12 @@ public class Opcode {
 						String reg2 = this.convertToBinary(this.num2);
 						this.rs = this.concatZero(reg2, this.num2);
 						System.out.println("RS is " + rs);
+						if (this.num2 > 31)
+						{
+							this.error = true;
+							this.errorMessage = "Invalid register.";
+							break;
+						}
 					}
 					else
 					{
@@ -242,11 +254,20 @@ public class Opcode {
 					System.out.println("hello " + tempC);
 					
 					this.num3 = tempC;
-					System.out.println("hi " + this.num3);
-					String reg3 = this.convertToBinary(this.num3);
-					System.out.println("Register: " + reg3);
-					this.rt = this.concatZero(reg3, this.num3);
-					System.out.println("RT is " + this.rt);
+					if (this.num3 > 31)
+					{
+						this.error = true;
+						this.errorMessage = "Invalid register.";
+						break;
+					}
+					else
+					{
+						System.out.println("hi " + this.num3);
+						String reg3 = this.convertToBinary(this.num3);
+						System.out.println("Register: " + reg3);
+						this.rt = this.concatZero(reg3, this.num3);
+						System.out.println("RT is " + this.rt);
+					}
 					 
 					// OPCODE GENERATION
 					this.opc = "000000";
@@ -309,6 +330,13 @@ public class Opcode {
 							int temp = Character.getNumericValue(this.par1.charAt(2));
 							this.num1 = (this.num1 * 10) + temp;
 							System.out.println(this.num1);
+							
+							if (this.num1 > 31)
+							{
+								this.error = true;
+								this.errorMessage = "Invalid register.";
+								break;
+							}
 						}
 						
 						// PARAMETER 1 in binary
@@ -337,6 +365,13 @@ public class Opcode {
 						int temp = Character.getNumericValue(this.par2.charAt(2));
 						this.num2 = (this.num2 * 10) + temp;
 						System.out.println(this.num2);
+						
+						if (this.num2 > 31)
+						{
+							this.error = true;
+							this.errorMessage = "Invalid register.";
+							break;
+						}
 					}
 					
 					// PARAMETER 2 in binary
@@ -402,6 +437,13 @@ public class Opcode {
 							int temp = Character.getNumericValue(this.par1.charAt(2));
 							this.num1 = (this.num1 * 10) + temp;
 							System.out.println(this.num1);
+							
+							if (this.num1 > 31)
+							{
+								this.error = true;
+								this.errorMessage = "Invalid register.";
+								break;
+							}
 						}
 						
 						// PARAMETER 1 in binary
@@ -425,6 +467,13 @@ public class Opcode {
 						int temp = Character.getNumericValue(this.par2.charAt(7));
 						this.num2 = (this.num2 * 10) + temp;
 						System.out.println(this.num2);
+						
+						if (this.num2 > 31)
+						{
+							this.error = true;
+							this.errorMessage = "Invalid register.";
+							break;
+						}
 					}
 					reg2 = this.convertToBinary(this.num2);
 					this.rs = this.concatZero(reg2, num2);
