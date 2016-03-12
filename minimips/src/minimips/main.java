@@ -128,8 +128,8 @@ public class main extends JFrame {
 					}
 				} catch (StringIndexOutOfBoundsException e)
 				{
-					txtrOpcode.setText("Null input.\n");
-					JOptionPane.showMessageDialog(new JFrame(), "Null input.");
+					txtrOpcode.setText("Error!\n");
+					JOptionPane.showMessageDialog(new JFrame(), "Error!");
 				}
 			}
 			
