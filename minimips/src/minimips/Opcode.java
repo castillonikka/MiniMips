@@ -23,7 +23,8 @@ public class Opcode {
 	private int num1, num2, num3, num4, num5, num6;
 	private String label;
 	private String output;
-	
+	private boolean error;
+	private String errorMessage;
 	
 	// Constructor
 	public Opcode(String line)
@@ -38,6 +39,25 @@ public class Opcode {
 	}
 	public void setOpcodeHex(String opcodeHex) {
 		this.opcodeHex = opcodeHex;
+	}
+	
+	public boolean isError() {
+		return error;
+	}
+
+
+	public void setError(boolean error) {
+		this.error = error;
+	}
+	
+	public String getErrorMessage()
+	{
+		return errorMessage;
+	}
+	
+	public void setErrorMessage(String error)
+	{
+		this.errorMessage = error;
 	}
 	
 	
@@ -68,6 +88,8 @@ public class Opcode {
 			result = "000" + register;
 		else if (num < 2)
 			result = "0000" + register;
+		else if (num >= 16)
+			result = register;
 		
 		return result;
 	}
@@ -152,28 +174,36 @@ public class Opcode {
 					// FIRST PARAMETER = REG
 					this.par1 = this.word.next().toString();
 					this.num1 = Character.getNumericValue(this.par1.charAt(1));
-					// if reg is from 10 to 31
-					if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+					if (this.num1 == 0)
 					{
-						System.out.println(Character.getNumericValue(this.par1.charAt(1)));
-						System.out.println(Character.getNumericValue(this.par1.charAt(2)));
-						int temp = Character.getNumericValue(this.par1.charAt(2));
-						this.num1 = (this.num1 * 10) + temp;
-						System.out.println(this.num1);
-						
-						// PARAMETER 1 in binary
-						String reg1 = this.convertToBinary(this.num1);
-						this.rd = this.concatZero(reg1, this.num1);
-						System.out.println("RD is " + reg1);
+						this.error = true;
+						this.errorMessage = "Invalid register.";
+						break;
 					}
 					else
 					{
-						// PARAMETER 1 in binary
-						String reg1 = this.convertToBinary(this.num1);
-						this.rd = this.concatZero(reg1, this.num1);
-						System.out.println("RD is " + reg1);
+						// if reg is from 10 to 31
+						if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+						{
+							System.out.println(Character.getNumericValue(this.par1.charAt(1)));
+							System.out.println(Character.getNumericValue(this.par1.charAt(2)));
+							int temp = Character.getNumericValue(this.par1.charAt(2));
+							this.num1 = (this.num1 * 10) + temp;
+							System.out.println(this.num1);
+							
+							// PARAMETER 1 in binary
+							String reg1 = this.convertToBinary(this.num1);
+							this.rd = this.concatZero(reg1, this.num1);
+							System.out.println("RD is " + rd);
+						}
+						else
+						{
+							// PARAMETER 1 in binary
+							String reg1 = this.convertToBinary(this.num1);
+							this.rd = this.concatZero(reg1, this.num1);
+							System.out.println("RD is " + rd);
+						}
 					}
-					
 					
 					
 					
@@ -192,14 +222,14 @@ public class Opcode {
 						// PARAMETER 2 in binary
 						String reg2 = this.convertToBinary(this.num2);
 						this.rs = this.concatZero(reg2, this.num2);
-						System.out.println("RS is " + reg2);
+						System.out.println("RS is " + rs);
 					}
 					else
 					{
 						// PARAMETER 2 in binary
 						String reg2 = this.convertToBinary(this.num2);
 						this.rs = this.concatZero(reg2, this.num2);
-						System.out.println("RS is " + reg2);
+						System.out.println("RS is " + rs);
 					}
 					
 					
@@ -212,9 +242,11 @@ public class Opcode {
 					System.out.println("hello " + tempC);
 					
 					this.num3 = tempC;
+					System.out.println("hi " + this.num3);
 					String reg3 = this.convertToBinary(this.num3);
+					System.out.println("Register: " + reg3);
 					this.rt = this.concatZero(reg3, this.num3);
-					System.out.println("RS is " + reg3);
+					System.out.println("RT is " + this.rt);
 					 
 					// OPCODE GENERATION
 					this.opc = "000000";
@@ -247,7 +279,8 @@ public class Opcode {
 							break;
 					}
 					
-					//String opcode = this.opc + " " + this.rs + " " + this.rt + " " + this.rd + " " + this.func1 + " " + this.func2;
+					String opcode = this.opc + " " + this.rs + " " + this.rt + " " + this.rd + " " + this.func1 + " " + this.func2;
+					System.out.println(opcode);
 					this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + this.rd + this.func1 + this.func2);
 					this.opcodeHex = this.extend(this.opcodeHex);
 					
@@ -260,30 +293,38 @@ public class Opcode {
 					// FIRST PARAMETER = REG
 					this.par1 = word.next().toString();
 					this.num1 = Character.getNumericValue(this.par1.charAt(1));
-					// if reg is from 10 to 31
-					if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+					if (this.num1 == 0 && (this.inst.equals("DADDIU") || this.inst.equals("daddiu")))
 					{
-						System.out.println(Character.getNumericValue(this.par1.charAt(1)));
-						System.out.println(Character.getNumericValue(this.par1.charAt(2)));
-						int temp = Character.getNumericValue(this.par1.charAt(2));
-						this.num1 = (this.num1 * 10) + temp;
-						System.out.println(this.num1);
+						this.error = true;
+						this.errorMessage = "Invalid register.";
+						break;
 					}
-					
-					// PARAMETER 1 in binary
-					String reg1 = this.convertToBinary(this.num1);
-					switch (inst)
+					else
 					{
-						case "BEQC":
-						case "beqc":
-							this.rs = this.concatZero(reg1, this.num1);
-							break;
-						case "DADDIU":
-						case "daddiu":
-							this.rt = this.concatZero(reg1, this.num1);
-							break;
+						// if reg is from 10 to 31
+						if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+						{
+							System.out.println(Character.getNumericValue(this.par1.charAt(1)));
+							System.out.println(Character.getNumericValue(this.par1.charAt(2)));
+							int temp = Character.getNumericValue(this.par1.charAt(2));
+							this.num1 = (this.num1 * 10) + temp;
+							System.out.println(this.num1);
+						}
+						
+						// PARAMETER 1 in binary
+						String reg1 = this.convertToBinary(this.num1);
+						switch (inst)
+						{
+							case "BEQC":
+							case "beqc":
+								this.rs = this.concatZero(reg1, this.num1);
+								break;
+							case "DADDIU":
+							case "daddiu":
+								this.rt = this.concatZero(reg1, this.num1);
+								break;
+						}
 					}
-					
 					
 					// SECOND PARAMETER = REG
 					this.par2 = word.next().toString();
@@ -345,20 +386,28 @@ public class Opcode {
 					// FIRST PARAMETER = REG
 					this.par1 = word.next().toString();
 					this.num1 = Character.getNumericValue(this.par1.charAt(1));
-					// if reg is from 10 to 31
-					if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+					if (this.num1 == 0 && (this.inst.equals("LD") || this.inst.equals("ld")))
 					{
-						System.out.println(Character.getNumericValue(this.par1.charAt(1)));
-						System.out.println(Character.getNumericValue(this.par1.charAt(2)));
-						int temp = Character.getNumericValue(this.par1.charAt(2));
-						this.num1 = (this.num1 * 10) + temp;
-						System.out.println(this.num1);
+						this.error = true;
+						this.errorMessage = "Invalid register.";
+						break;
 					}
-					
-					// PARAMETER 1 in binary
-					reg1 = this.convertToBinary(this.num1);
-					this.rt = this.concatZero(reg1, this.num1);
-					
+					else
+					{
+						// if reg is from 10 to 31
+						if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
+						{
+							System.out.println(Character.getNumericValue(this.par1.charAt(1)));
+							System.out.println(Character.getNumericValue(this.par1.charAt(2)));
+							int temp = Character.getNumericValue(this.par1.charAt(2));
+							this.num1 = (this.num1 * 10) + temp;
+							System.out.println(this.num1);
+						}
+						
+						// PARAMETER 1 in binary
+						String reg1 = this.convertToBinary(this.num1);
+						this.rt = this.concatZero(reg1, this.num1);
+					}
 					
 					// SECOND PARAMETER = IMMEDIATE/MEMORY (offset)
 					this.par2 = word.next().toString();

@@ -116,7 +116,11 @@ public class main extends JFrame {
 					Opcode opc = new Opcode(code[a]);
 					String outputOpc = opc.firstWord();
 					System.out.println("Opcode is: " + outputOpc);
-					txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+					if (opc.isError() == true)
+					{
+						txtrOpcode.setText(opc.getErrorMessage());
+					}
+					else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 				}
 			}
 			
@@ -233,7 +237,6 @@ public class main extends JFrame {
 		
 		
 		scrollPane_1.setViewportView(txtrCode);
-		txtrCode.setText("Code");
 		
 		JPanel panel_1 = new JPanel();
 		tabbedPane.addTab("Tab 2", null, panel_1, null);
