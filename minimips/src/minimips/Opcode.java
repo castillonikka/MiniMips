@@ -515,6 +515,8 @@ public class Opcode {
 				
 				default:
 					System.out.println("ERROR");
+					this.error = true;
+					this.errorMessage = "Error!";
 					
 			}
 		return this.opcodeHex;
@@ -535,6 +537,9 @@ public class Opcode {
 			this.inst = this.word.next().toString();
 			this.inst = this.word.next().toString();
 			System.out.println(this.inst);
+			
+			//if (this.inst.equals(""))
+			
 			this.output = this.generateOpcode(this.inst);
 			System.out.println(this.output);
 		}
