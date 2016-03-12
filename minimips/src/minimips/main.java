@@ -36,6 +36,9 @@ public class main extends JFrame {
 	private JTable table_1;
 	private int[] pc;
 	private String[] code;
+	private String[] pcHex;
+	
+	
 
 	/**
 	 * Launch the application.
@@ -99,18 +102,36 @@ public class main extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				//System.out.println(textPane.getText());
 				
-				
+				pc = new int[100];
+				pcHex = new String[100];
 				
 				code = txtrCode.getText().split("\\n");
 				txtrOpcode.setText("");
 				for (int a = 0; a < code.length; a++)
 				{
-					System.out.println(code[a]);
+					pc[a] = 4 * a;
+					String tempBin = this.convertToBinary(pc[a]);
+					pcHex[a] = this.convertToHex(tempBin);
+					System.out.println(code[a] + "       " + pcHex[a]);
 					Opcode opc = new Opcode(code[a]);
 					String outputOpc = opc.firstWord();
 					System.out.println("Opcode is: " + outputOpc);
 					txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 				}
+			}
+			
+			public String convertToBinary(int num)
+			{
+				String binary;
+				
+				return binary = Integer.toBinaryString(num); 
+			}
+			
+			public String convertToHex(String num)
+			{
+				String hex;
+				
+				return hex = Integer.toHexString(Integer.parseInt(num, 2));
 			}
 		});
 		
