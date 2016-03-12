@@ -403,6 +403,13 @@ public class Opcode {
 					{
 						String par3 = word.next().toString();
 						
+						if (par3.length() != 4)
+						{
+							this.error = true;
+							this.errorMessage = "Error immediate.";
+							break;
+						}
+						
 						this.opc = "011001";
 						this.imm = par3;
 						
