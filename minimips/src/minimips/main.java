@@ -27,6 +27,7 @@ import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
+import javax.swing.JOptionPane;
 import javax.swing.DefaultComboBoxModel;
 
 public class main extends JFrame {
@@ -121,12 +122,14 @@ public class main extends JFrame {
 						if (opc.isError() == true)
 						{
 							txtrOpcode.setText(opc.getErrorMessage());
+							JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
 						}
 						else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 					}
 				} catch (StringIndexOutOfBoundsException e)
 				{
 					txtrOpcode.setText("Null input.\n");
+					JOptionPane.showMessageDialog(new JFrame(), "Null input.");
 				}
 			}
 			
