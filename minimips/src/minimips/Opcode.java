@@ -168,8 +168,15 @@ public class Opcode {
 	public String extendBc (String num)
 	{
 		return (("00000000000000000000000000" + num).substring(num.length()));
+	}
+	
+	public String extendBeqc (String num)
+	{
+		String output = "";
 		
+		output = ("0000000000000000" + num).substring(num.length());
 		
+		return output;
 	}
 	
 	public int convertToNum (char a)
@@ -467,21 +474,28 @@ public class Opcode {
 						this.opc = "011001";
 						this.imm = par3.toUpperCase();
 						
+						this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt) + this.imm;
+						
 					}
 					else
 					{
 						// OFFSET FOR BEQC
-						int offset = (this.pcLabel - (this.pcBranch - 4))/4;
-						String binOffset = this.convertToBinary(offset);
-						this.imm = this.convertToHex(binOffset);
 						this.opc = "001000";
+						
+						int offset = (this.pcLabel - (this.pcBranch + 4))/4;
+						System.out.println("PC LABEL IS " + this.pcLabel + " AND PC BRANCH IS " + this.pcBranch);
+						System.out.println("OFFSET IS " + offset);
+						String binOffset = this.convertToBinary(offset);
+						System.out.println("OFFSET IN BINARY IS " + binOffset);
+						binOffset = this.extendBeqc(binOffset);
+						System.out.println("LALAL " + binOffset);
+						
+						this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + binOffset);
 					}
 					
 					//opcode = opc + " " + rs + " " + rt + " " + imm;
 					/*this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + this.par3);
 					this.opcodeHex = this.extend(this.opcodeHex);*/
-					
-					this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt) + this.imm;
 					
 					break;
 					

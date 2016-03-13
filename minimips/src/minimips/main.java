@@ -169,9 +169,36 @@ public class main extends JFrame {
 						System.out.println(instruction);
 						
 						
-						if (instruction.equals("BEQC") || instruction.equals("beqc") || instruction.equals("BC") || instruction.equals("bc"))
+						if (instruction.equals("BC") || instruction.equals("bc"))
 						{
 							String label = code[a].split(" ")[1];
+							System.out.println(label);
+							for (int b = 0; b < code.length; b++)
+							{
+								String lbl = code[b].split(" ")[0];
+								lbl = lbl.substring(0, lbl.length()-1);
+								System.out.println(lbl);
+								if (lbl.equals(label))
+								{
+									int target = 4 * b;
+									int pcBranch = pc[a];
+									System.out.println(target + " and " + pcBranch + " and " + code[a]);
+									Opcode opc = new Opcode (code[a], pcBranch, target);
+									String outputOpc = opc.firstWord();
+									
+									System.out.println("Opcode is: " + outputOpc);
+									if (opc.isError() == true)
+									{
+										txtrOpcode.setText(opc.getErrorMessage());
+										JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
+									}
+									else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+								}
+							}
+						}
+						else if (instruction.equals("BEQC") || instruction.equals("beqc"))
+						{
+							String label = code[a].split(" ")[3];
 							System.out.println(label);
 							for (int b = 0; b < code.length; b++)
 							{
