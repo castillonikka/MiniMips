@@ -119,19 +119,63 @@ public class main extends JFrame {
 					txtrCode2.setText(txtrCode.getText());
 					code = txtrCode.getText().split("\\n");
 					txtrOpcode.setText("");
+					
+					/*for (int b = 0; b < code.length; b++)
+					{
+						pc[b] = 4 * b;
+						String tempBin = this.convertToBinary(pc[b]);
+						pcHex[b] = this.convertToHex(tempBin);
+						
+						Opcode temp = new Opcode(code[b]);
+						String temp2 = temp.firstWord();
+						
+						if (temp.getLabel() != null)
+						{
+							System.out.println("Label is: " + temp.getLabel());
+							labels[b] = temp.getLabel();
+							Opcode opcLabel = new Opcode(code[b], pcHex[b], pc[b]);
+							temp2 = opcLabel.firstWord();
+							
+							String tempLabel;
+							
+							for (int c = 0; c < code.length; c++)
+							{
+								Opcode temp3 = new Opcode(code[c]);
+								switch(temp3.getInst())
+								{
+									case "BEQC":
+									case "beqc":
+										tempLabel = temp3.getBranchLabel();
+										if (tempLabel.equals(temp.getLabel()))
+											System.out.println(tempLabel + " AND " + temp.getLabel());
+										break;
+									case "BC":
+									case "bc":
+										tempLabel = temp3.getBranchLabel();
+										break;
+								}
+							}
+						}
+					}*/
+					
 					for (int a = 0; a < code.length; a++)
 					{
 						pc[a] = 4 * a;
 						String tempBin = this.convertToBinary(pc[a]);
 						pcHex[a] = this.convertToHex(tempBin);
+						
 						System.out.println(code[a] + "       " + pcHex[a]);
 						Opcode opc = new Opcode(code[a]);
 						String outputOpc = opc.firstWord();
+						
 						if (opc.getLabel() != null)
 						{
 							System.out.println("Label is: " + opc.getLabel());
 							labels[a] = opc.getLabel();
+							Opcode opcLabel = new Opcode(code[a], pcHex[a], pc[a]);
+							//temp2 = opcLabel.firstWord();
 						}
+						
 						System.out.println("Opcode is: " + outputOpc);
 						if (opc.isError() == true)
 						{
@@ -262,7 +306,7 @@ public class main extends JFrame {
 		scrollPane_1.setViewportView(txtrCode);
 		
 		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Tab 2", null, panel_1, null);
+		tabbedPane.addTab("Execute", null, panel_1, null);
 		
 		JLabel lblOpcode = new JLabel("Code:");
 		lblOpcode.setBounds(30, 26, 63, 14);

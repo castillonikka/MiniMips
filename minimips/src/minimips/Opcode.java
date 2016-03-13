@@ -21,7 +21,9 @@ public class Opcode {
 	private String par3;
 	private String imm;
 	private int num1, num2, num3, num4, num5, num6;
-	private String label;
+	private String label, branchLabel;
+	private String pcHex;
+	private int pc;
 	
 
 	private String output;
@@ -34,8 +36,24 @@ public class Opcode {
 		this.input = line;
 	}
 	
+	public Opcode(String line, String pcHex, int pc)
+	{
+		this.input = line;
+		this.pcHex = pcHex;
+		this.pc = pc;
+	}
+	
 	
 	// Getters and Setters
+	
+	public String getBranchLabel() {
+		return branchLabel;
+	}
+	
+	public String getInst() {
+		return inst;
+	}
+	
 	public String getOpcodeHex() {
 		return opcodeHex;
 	}
@@ -63,7 +81,24 @@ public class Opcode {
 		return label;
 	}
 	
-	
+	public String getPcHex() {
+		return pcHex;
+	}
+
+
+	public void setPcHex(String pcHex) {
+		this.pcHex = pcHex;
+	}
+
+
+	public int getPc() {
+		return pc;
+	}
+
+
+	public void setPc(int pc) {
+		this.pc = pc;
+	}
 	// Methods
 	public String convertToBinary(int num)
 	{
@@ -76,7 +111,7 @@ public class Opcode {
 	{
 		String hex;
 		
-		return hex = Integer.toHexString(Integer.parseInt(num, 2));
+		return hex = (Integer.toHexString(Integer.parseInt(num, 2))).toUpperCase();
 	}
 	
 	public String concatZero(String register, int num)
@@ -402,10 +437,9 @@ public class Opcode {
 					
 					
 					// THIRD PARAMETER = IMMEDIATE FOR DADDIU
+					String par3 = word.next().toString();
 					if (this.inst.equals("DADDIU") || this.inst.equals("daddiu"))
 					{
-						String par3 = word.next().toString();
-						
 						if (par3.length() != 4)
 						{
 							this.error = true;
@@ -414,13 +448,13 @@ public class Opcode {
 						}
 						
 						this.opc = "011001";
-						this.imm = par3;
+						this.imm = par3.toUpperCase();
 						
 					}
 					else
 					{
 						// OFFSET FOR BEQC
-						
+						this.branchLabel = par3; 
 						this.opc = "001000";
 					}
 					
@@ -477,7 +511,7 @@ public class Opcode {
 					
 					// THIRD PARAMETER = REG (base)
 					this.par3 = par2.substring(6, 7);
-					System.out.println(par3);
+					System.out.println(this.par3);
 					this.num2 = Character.getNumericValue(this.par3.charAt(0));
 					if (Character.getNumericValue(this.par2.charAt(7)) >= 0 && Character.getNumericValue(this.par2.charAt(7)) <= 9)
 					{
