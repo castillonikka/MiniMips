@@ -165,24 +165,69 @@ public class main extends JFrame {
 						pcHex[a] = this.convertToHex(tempBin);
 						
 						System.out.println(code[a] + "       " + pcHex[a]);
-						Opcode opc = new Opcode(code[a]);
-						String outputOpc = opc.firstWord();
+						String instruction = code[a].split(" ")[0];
+						System.out.println(instruction);
 						
-						if (opc.getLabel() != null)
+						
+						if (instruction.equals("BEQC") || instruction.equals("beqc") || instruction.equals("BC") || instruction.equals("bc"))
+						{
+							String label = code[a].split(" ")[1];
+							System.out.println(label);
+							for (int b = 0; b < code.length; b++)
+							{
+								String lbl = code[b].split(" ")[0];
+								lbl = lbl.substring(0, lbl.length()-1);
+								System.out.println(lbl);
+								if (lbl.equals(label))
+								{
+									int target = 4 * b;
+									int pcBranch = pc[a];
+									System.out.println(target + " and " + pcBranch + " and " + code[a]);
+									Opcode opc = new Opcode (code[a], pcBranch, target);
+									String outputOpc = opc.firstWord();
+									
+									System.out.println("Opcode is: " + outputOpc);
+									if (opc.isError() == true)
+									{
+										txtrOpcode.setText(opc.getErrorMessage());
+										JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
+									}
+									else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+								}
+							}
+						}
+						else
+						{
+							Opcode opc = new Opcode(code[a]);
+							String outputOpc = opc.firstWord();
+							
+							System.out.println("Opcode is: " + outputOpc);
+							if (opc.isError() == true)
+							{
+								txtrOpcode.setText(opc.getErrorMessage());
+								JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
+							}
+							else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+						}
+						
+						/*if (opc.getLabel() != null)
 						{
 							System.out.println("Label is: " + opc.getLabel());
 							labels[a] = opc.getLabel();
 							Opcode opcLabel = new Opcode(code[a], pcHex[a], pc[a]);
 							//temp2 = opcLabel.firstWord();
-						}
+							
+							for (int b = 0; b < code.length; b++)
+							{
+								if(code[b].equals("BEQC " + opc.getLabel()) || code[b].equals("beqc " + opc.getLabel()) ||
+										code[b].equals("BC " + opc.getLabel()) || code[b].equals("bc " + opc.getLabel()))
+								{
+									Opcode
+								}
+							}
+						}*/
 						
-						System.out.println("Opcode is: " + outputOpc);
-						if (opc.isError() == true)
-						{
-							txtrOpcode.setText(opc.getErrorMessage());
-							JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
-						}
-						else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+						
 					}
 				} catch (StringIndexOutOfBoundsException e)
 				{

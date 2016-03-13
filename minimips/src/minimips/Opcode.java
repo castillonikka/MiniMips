@@ -1,5 +1,6 @@
 package minimips;
 
+import java.math.BigInteger;
 import java.util.Scanner;
 
 public class Opcode {
@@ -24,6 +25,8 @@ public class Opcode {
 	private String label, branchLabel;
 	private String pcHex;
 	private int pc;
+	private int pcBranch;
+	private int pcLabel;
 	
 
 	private String output;
@@ -41,6 +44,13 @@ public class Opcode {
 		this.input = line;
 		this.pcHex = pcHex;
 		this.pc = pc;
+	}
+	
+	public Opcode(String line, int pcBranch, int pcLabel)
+	{
+		this.input = line;
+		this.pcBranch = pcBranch;
+		this.pcLabel = pcLabel;
 	}
 	
 	
@@ -153,6 +163,13 @@ public class Opcode {
 		output = ("00000000" + num).substring(num.length());
 		
 		return output;
+	}
+	
+	public String extendBc (String num)
+	{
+		return (("00000000000000000000000000" + num).substring(num.length()));
+		
+		
 	}
 	
 	public int convertToNum (char a)
@@ -454,7 +471,9 @@ public class Opcode {
 					else
 					{
 						// OFFSET FOR BEQC
-						this.branchLabel = par3; 
+						int offset = (this.pcLabel - (this.pcBranch - 4))/4;
+						String binOffset = this.convertToBinary(offset);
+						this.imm = this.convertToHex(binOffset);
 						this.opc = "001000";
 					}
 					
@@ -555,13 +574,26 @@ public class Opcode {
 				case "BC":
 				case "bc":
 					// FIRST PARAMETER = OFFSET
-					String label = "";
+					int offset = (this.pcLabel - (this.pcBranch + 4))/4;
+					System.out.println("PC LABEL IS " + this.pcLabel + " AND PC BRANCH IS " + this.pcBranch);
+					System.out.println("OFFSET IS " + offset);
+					String binOffset = this.convertToBinary(offset);
+					System.out.println("OFFSET IN BINARY IS " + binOffset);
+					
+					this.imm = this.extendBc(binOffset);
+					System.out.println(this.imm);
 					
 					
 					// GENERATE OPCODE
 					this.opc = "110010";
-					this.opcodeHex = this.convertToHex(opc + label);
-					this.opcodeHex = this.extend(this.opcodeHex);
+					//this.opcodeHex = this.convertToHex(opc + imm);
+					System.out.println("OPCODE IN BINARY IS " + this.opc + " " + this.imm);
+					//this.opcodeHex = this.extend(this.opcodeHex);
+					/*this.opcodeHex = this.convertToHex(this.opc + this.imm);
+					System.out.println("OPCODE IN HEX IS " + this.opcodeHex);*/
+					String bcOpc = this.opc + this.imm;
+					BigInteger b = new BigInteger (bcOpc, 2);
+					this.opcodeHex = b.toString(16).toUpperCase();
 					
 					break;
 				
@@ -596,6 +628,7 @@ public class Opcode {
 		else 
 		{
 			this.inst = this.word.next().toString();
+			System.out.println("AKJDFHADSJFHAJD " + this.inst);
 			this.output = this.generateOpcode(this.inst);
 			System.out.println(this.output);
 		}
