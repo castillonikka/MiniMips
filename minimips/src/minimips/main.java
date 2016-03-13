@@ -39,7 +39,7 @@ public class main extends JFrame {
 	private int[] pc;
 	private String[] code;
 	private String[] pcHex;
-	
+	private String[] labels;
 	
 
 	/**
@@ -100,6 +100,10 @@ public class main extends JFrame {
 		JTextArea txtrCode = new JTextArea();
 		txtrCode.setFont(new Font("Courier New", Font.PLAIN, 13));
 		
+		JTextArea txtrCode2 = new JTextArea();
+		txtrCode2.setBounds(30, 51, 246, 300);
+		txtrCode2.setEditable(false);
+		
 		JButton btnEnter = new JButton("Enter Program");
 		btnEnter.setBounds(102, 199, 118, 23);
 		btnEnter.addActionListener(new ActionListener() {
@@ -110,7 +114,9 @@ public class main extends JFrame {
 				{
 					pc = new int[100];
 					pcHex = new String[100];
+					labels = new String[100];
 					
+					txtrCode2.setText(txtrCode.getText());
 					code = txtrCode.getText().split("\\n");
 					txtrOpcode.setText("");
 					for (int a = 0; a < code.length; a++)
@@ -121,6 +127,11 @@ public class main extends JFrame {
 						System.out.println(code[a] + "       " + pcHex[a]);
 						Opcode opc = new Opcode(code[a]);
 						String outputOpc = opc.firstWord();
+						if (opc.getLabel() != null)
+						{
+							System.out.println("Label is: " + opc.getLabel());
+							labels[a] = opc.getLabel();
+						}
 						System.out.println("Opcode is: " + outputOpc);
 						if (opc.isError() == true)
 						{
@@ -256,10 +267,7 @@ public class main extends JFrame {
 		JLabel lblOpcode = new JLabel("Code:");
 		lblOpcode.setBounds(30, 26, 63, 14);
 		
-		JTextArea txtrAsd = new JTextArea();
-		txtrAsd.setBounds(30, 51, 246, 300);
-		txtrAsd.setEditable(false);
-		txtrAsd.setText("asd");
+		
 		
 		JButton btnNewButton = new JButton("Single-Step");
 		btnNewButton.setBounds(30, 362, 121, 23);
@@ -270,26 +278,24 @@ public class main extends JFrame {
 		JLabel lblPipelineMap = new JLabel("Pipeline Map:");
 		lblPipelineMap.setBounds(305, 26, 115, 14);
 		
-		JTextArea txtrAsdf = new JTextArea();
-		txtrAsdf.setBounds(305, 51, 272, 122);
-		txtrAsdf.setEditable(false);
-		txtrAsdf.setText("asdf");
+		JTextArea txtrPipeline = new JTextArea();
+		txtrPipeline.setBounds(305, 51, 272, 122);
+		txtrPipeline.setEditable(false);
 		panel_1.setLayout(null);
 		panel_1.add(btnNewButton);
 		panel_1.add(btnFullExecution);
-		panel_1.add(txtrAsd);
+		panel_1.add(txtrCode2);
 		panel_1.add(lblOpcode);
 		panel_1.add(lblPipelineMap);
-		panel_1.add(txtrAsdf);
+		panel_1.add(txtrPipeline);
 		
 		JLabel lblMipsRegisters = new JLabel("MIPS64 Registers:");
 		lblMipsRegisters.setBounds(305, 198, 131, 14);
 		panel_1.add(lblMipsRegisters);
 		
-		JTextArea txtrDfg = new JTextArea();
-		txtrDfg.setBounds(305, 223, 272, 128);
-		txtrDfg.setEditable(false);
-		txtrDfg.setText("dfg");
-		panel_1.add(txtrDfg);
+		JTextArea txtrRegisters = new JTextArea();
+		txtrRegisters.setBounds(305, 223, 272, 128);
+		txtrRegisters.setEditable(false);
+		panel_1.add(txtrRegisters);
 	}
 }

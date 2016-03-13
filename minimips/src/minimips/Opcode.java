@@ -22,6 +22,8 @@ public class Opcode {
 	private String imm;
 	private int num1, num2, num3, num4, num5, num6;
 	private String label;
+	
+
 	private String output;
 	private boolean error;
 	private String errorMessage;
@@ -44,8 +46,6 @@ public class Opcode {
 	public boolean isError() {
 		return error;
 	}
-
-
 	public void setError(boolean error) {
 		this.error = error;
 	}
@@ -54,10 +54,13 @@ public class Opcode {
 	{
 		return errorMessage;
 	}
-	
 	public void setErrorMessage(String error)
 	{
 		this.errorMessage = error;
+	}
+	
+	public String getLabel() {
+		return label;
 	}
 	
 	
