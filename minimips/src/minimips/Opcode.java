@@ -385,6 +385,7 @@ public class Opcode {
 					// FIRST PARAMETER = REG
 					this.par1 = word.next().toString();
 					this.num1 = Character.getNumericValue(this.par1.charAt(1));
+					
 					if (this.num1 == 0 && (this.inst.equals("DADDIU") || this.inst.equals("daddiu")))
 					{
 						this.error = true;
@@ -409,6 +410,7 @@ public class Opcode {
 								break;
 							}
 						}
+						System.out.println("num 1 is " + this.num1);
 						
 						// PARAMETER 1 in binary
 						String reg1 = this.convertToBinary(this.num1);
@@ -444,6 +446,7 @@ public class Opcode {
 							break;
 						}
 					}
+					System.out.println("num 2 is " + this.num2);
 					
 					// PARAMETER 2 in binary
 					String reg2 = this.convertToBinary(this.num2);
@@ -462,17 +465,39 @@ public class Opcode {
 					
 					// THIRD PARAMETER = IMMEDIATE FOR DADDIU
 					String par3 = word.next().toString();
+					String tempImm = par3.substring(1).toUpperCase();
+					System.out.println(par3);
 					if (this.inst.equals("DADDIU") || this.inst.equals("daddiu"))
 					{
-						if (par3.length() != 4)
+						System.out.println("length is " + par3.length());
+						System.out.println("new length is " + tempImm.length());
+						if (tempImm.length() != 4 || par3.charAt(0) != '#')
 						{
 							this.error = true;
 							this.errorMessage = "Error immediate.";
 							break;
 						}
 						
+						else
+						{
+							for (int a = 0; a < 4; a++)
+							{
+								if (tempImm.charAt(a) != '0' && tempImm.charAt(a) != '1' && tempImm.charAt(a) != '2' && tempImm.charAt(a) != '3' && tempImm.charAt(a) != '4' && 
+										tempImm.charAt(a) != '5' && tempImm.charAt(a) != '6' && tempImm.charAt(a) != '7' && tempImm.charAt(a) != '8' && 
+										tempImm.charAt(a) != '9' && tempImm.charAt(a) != 'A' && tempImm.charAt(a) != 'B' && tempImm.charAt(a) != 'C' && 
+										tempImm.charAt(a) != 'D' && tempImm.charAt(a) != 'E' && tempImm.charAt(a) != 'F')
+								{
+									this.error = true;
+									this.errorMessage = "Error immediate.";
+									break;
+								}
+							}
+							if (this.error == true)
+								break;
+						}
+						
 						this.opc = "011001";
-						this.imm = par3.toUpperCase();
+						this.imm = tempImm;
 						
 						this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt) + this.imm;
 						
