@@ -23,6 +23,7 @@ import javax.swing.JEditorPane;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.SwingConstants;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.TableModel;
 import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
@@ -30,6 +31,7 @@ import javax.swing.JList;
 import javax.swing.JOptionPane;
 import javax.swing.DefaultComboBoxModel;
 import java.awt.Font;
+import java.awt.Toolkit;
 
 public class main extends JFrame {
 
@@ -40,7 +42,20 @@ public class main extends JFrame {
 	private String[] code;
 	private String[] pcHex;
 	private String[] labels;
+	private String[] registers = new String[32]; 
+
+	public String[] getRegisters() {
+		return registers;
+	}
+
+	public void setRegisters(String[] registers) {
+		this.registers = registers;
+	}
 	
+	public void setValue (int index, String value)
+	{
+		this.registers[index] = value;
+	}
 
 	/**
 	 * Launch the application.
@@ -62,54 +77,91 @@ public class main extends JFrame {
 	 * Create the frame.
 	 */
 	public main() {
+		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Grace\\Documents\\OTHERS\\Block\\A\\J\\z4.jpg"));
+		
+		for (int x = 0; x < 32; x++)
+			this.registers[x] = "0000000000000000";
+		
 		setTitle("mH1nh1m1pSxZc");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 631, 551);
+		
 		contentPane = new JPanel();
 		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
 		setContentPane(contentPane);
-		contentPane.setLayout(new BorderLayout(0, 0));
 		
+		contentPane.setLayout(new BorderLayout(0, 0));
 		JTabbedPane tabbedPane = new JTabbedPane(JTabbedPane.TOP);
+		JPanel panel = new JPanel();
+		JLabel lblOpcode_1 = new JLabel("Opcode:");
+		JLabel label = new JLabel("Code:");
+		JLabel label_2 = new JLabel("Registers:");
+		JLabel label_3 = new JLabel("Memory:");
+		JScrollPane scrollPane = new JScrollPane();
+		JScrollPane scrollPane_2 = new JScrollPane();
+		JScrollPane scrollPane_3 = new JScrollPane();
+		JTextArea txtrOpcode = new JTextArea();
+		JTextArea txtrCode = new JTextArea();
+		JTextArea txtrCode2 = new JTextArea();
+		JButton btnEnter = new JButton("Enter Program");
+		table = new JTable();
+		table_1 = new JTable();
+		JScrollPane scrollPane_1 = new JScrollPane();
+		JPanel panel_1 = new JPanel();
+		JLabel lblOpcode = new JLabel("Code:");
+		JButton btnNewButton = new JButton("Single-Step");
+		JButton btnFullExecution = new JButton("Full Execution");
+		JLabel lblPipelineMap = new JLabel("Pipeline Map:");
+		JTextArea txtrPipeline = new JTextArea();
+		JLabel lblMipsRegisters = new JLabel("MIPS64 Registers:");
+		JTextArea txtrRegisters = new JTextArea();
+		JButton btnInitializeValues = new JButton("Initialize Values");
+		
+		btnInitializeValues.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				registers[0] = "0000000000000000";
+				table.getModel().setValueAt(registers[0], 0, 1);
+				for (int a = 1; a < 32; a++)
+				{
+					registers[a] = table.getModel().getValueAt(a, 1).toString();
+					System.out.println("R" + a + ": " + registers[a]);
+				}
+			}
+		});
+		
+		
+		lblOpcode_1.setBounds(316, 43, 124, 14);
+		label_2.setBounds(31, 243, 49, 14);
+		label_3.setBounds(316, 243, 42, 14);
+		scrollPane.setBounds(31, 263, 263, 146);
+		scrollPane_2.setBounds(316, 263, 263, 146);
+		scrollPane_3.setBounds(316, 68, 263, 120);
+		txtrCode2.setBounds(30, 51, 246, 300);
+		btnEnter.setBounds(93, 199, 137, 23);
+		label.setBounds(31, 43, 49, 14);
+		scrollPane_1.setBounds(31, 68, 263, 120);
+		btnInitializeValues.setBounds(93, 420, 137, 23);
+		lblOpcode.setBounds(30, 26, 63, 14);
+		btnNewButton.setBounds(30, 362, 121, 23);
+		btnFullExecution.setBounds(161, 362, 115, 23);
+		lblPipelineMap.setBounds(305, 26, 115, 14);
+		txtrPipeline.setBounds(305, 51, 272, 122);
+		lblMipsRegisters.setBounds(305, 198, 131, 14);
+		txtrRegisters.setBounds(305, 223, 272, 128);
+		
+		
 		contentPane.add(tabbedPane, BorderLayout.CENTER);
 		
-		JPanel panel = new JPanel();
 		panel.setToolTipText("");
 		tabbedPane.addTab("Tab 1", null, panel, null);
 		
-		JLabel lblOpcode_1 = new JLabel("Opcode:");
-		lblOpcode_1.setBounds(316, 43, 124, 14);
-		
-		JLabel label_2 = new JLabel("Registers:");
-		label_2.setBounds(31, 243, 49, 14);
-		
-		JLabel label_3 = new JLabel("Memory:");
-		label_3.setBounds(316, 243, 42, 14);
-		
-		JScrollPane scrollPane = new JScrollPane();
-		scrollPane.setBounds(31, 263, 263, 146);
-		
-		JScrollPane scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(316, 263, 263, 146);
-		
-		JScrollPane scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(316, 68, 263, 120);
-		
-		JTextArea txtrOpcode = new JTextArea();
 		txtrOpcode.setFont(new Font("Courier New", Font.PLAIN, 13));
-		JTextArea txtrCode = new JTextArea();
 		txtrCode.setFont(new Font("Courier New", Font.PLAIN, 13));
 		
-		JTextArea txtrCode2 = new JTextArea();
-		txtrCode2.setBounds(30, 51, 246, 300);
 		txtrCode2.setEditable(false);
 		
-		JButton btnEnter = new JButton("Enter Program");
-		btnEnter.setBounds(102, 199, 118, 23);
 		btnEnter.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				//System.out.println(textPane.getText());
-				
 				try
 				{
 					pc = new int[100];
@@ -119,44 +171,6 @@ public class main extends JFrame {
 					txtrCode2.setText(txtrCode.getText());
 					code = txtrCode.getText().split("\\n");
 					txtrOpcode.setText("");
-					
-					/*for (int b = 0; b < code.length; b++)
-					{
-						pc[b] = 4 * b;
-						String tempBin = this.convertToBinary(pc[b]);
-						pcHex[b] = this.convertToHex(tempBin);
-						
-						Opcode temp = new Opcode(code[b]);
-						String temp2 = temp.firstWord();
-						
-						if (temp.getLabel() != null)
-						{
-							System.out.println("Label is: " + temp.getLabel());
-							labels[b] = temp.getLabel();
-							Opcode opcLabel = new Opcode(code[b], pcHex[b], pc[b]);
-							temp2 = opcLabel.firstWord();
-							
-							String tempLabel;
-							
-							for (int c = 0; c < code.length; c++)
-							{
-								Opcode temp3 = new Opcode(code[c]);
-								switch(temp3.getInst())
-								{
-									case "BEQC":
-									case "beqc":
-										tempLabel = temp3.getBranchLabel();
-										if (tempLabel.equals(temp.getLabel()))
-											System.out.println(tempLabel + " AND " + temp.getLabel());
-										break;
-									case "BC":
-									case "bc":
-										tempLabel = temp3.getBranchLabel();
-										break;
-								}
-							}
-						}
-					}*/
 					
 					for (int a = 0; a < code.length; a++)
 					{
@@ -236,25 +250,6 @@ public class main extends JFrame {
 							}
 							else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 						}
-						
-						/*if (opc.getLabel() != null)
-						{
-							System.out.println("Label is: " + opc.getLabel());
-							labels[a] = opc.getLabel();
-							Opcode opcLabel = new Opcode(code[a], pcHex[a], pc[a]);
-							//temp2 = opcLabel.firstWord();
-							
-							for (int b = 0; b < code.length; b++)
-							{
-								if(code[b].equals("BEQC " + opc.getLabel()) || code[b].equals("beqc " + opc.getLabel()) ||
-										code[b].equals("BC " + opc.getLabel()) || code[b].equals("bc " + opc.getLabel()))
-								{
-									Opcode
-								}
-							}
-						}*/
-						
-						
 					}
 				} catch (StringIndexOutOfBoundsException e)
 				{
@@ -279,51 +274,59 @@ public class main extends JFrame {
 		});
 		
 		
-		table = new JTable();
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"R0 =", "0000000000000000"},
-				{"R1 =", null},
-				{"R2 =", null},
-				{"R3 =", null},
-				{"R4 =", null},
-				{"R5 =", null},
-				{"R6 =", null},
-				{"R7 =", null},
-				{"R8 =", null},
-				{"R9 =", null},
-				{"R10 =", null},
-				{"R11 =", null},
-				{"R12 =", null},
-				{"R13 =", null},
-				{"R14 =", null},
-				{"R15 =", null},
-				{"R16 =", null},
-				{"R17 =", null},
-				{"R18 =", null},
-				{"R19 =", null},
-				{"R20 =", null},
-				{"R21 =", null},
-				{"R22 =", null},
-				{"R23 =", null},
-				{"R24 =", null},
-				{"R25 =", null},
-				{"R26 =", null},
-				{"R27 =", null},
-				{"R28 =", null},
-				{"R29 =", null},
-				{"R30 =", null},
+				{"R0 =", this.registers[0]},
+				{"R1 =", this.registers[1]},
+				{"R2 =", this.registers[2]},
+				{"R3 =", this.registers[3]},
+				{"R4 =", this.registers[4]},
+				{"R5 =", this.registers[5]},
+				{"R6 =", this.registers[6]},
+				{"R7 =", this.registers[7]},
+				{"R8 =", this.registers[8]},
+				{"R9 =", this.registers[9]},
+				{"R10 =", this.registers[10]},
+				{"R11 =", this.registers[11]},
+				{"R12 =", this.registers[12]},
+				{"R13 =", this.registers[13]},
+				{"R14 =", this.registers[14]},
+				{"R15 =", this.registers[15]},
+				{"R16 =", this.registers[16]},
+				{"R17 =", this.registers[17]},
+				{"R18 =", this.registers[18]},
+				{"R19 =", this.registers[19]},
+				{"R20 =", this.registers[20]},
+				{"R21 =", this.registers[21]},
+				{"R22 =", this.registers[22]},
+				{"R23 =", this.registers[23]},
+				{"R24 =", this.registers[24]},
+				{"R25 =", this.registers[25]},
+				{"R26 =", this.registers[26]},
+				{"R27 =", this.registers[27]},
+				{"R28 =", this.registers[28]},
+				{"R29 =", this.registers[29]},
+				{"R30 =", this.registers[30]},
+				{"R31 =", this.registers[31]}
 			},
 			new String[] {
 				"Registers", "Values"
 			}
-		));
+		) {
+			boolean[] columnEditables = new boolean[] {
+				false, true
+			};
+			public boolean isCellEditable(int row, int column) {
+				return columnEditables[column];
+			}
+		});
 		table.setFillsViewportHeight(true);
 		table.setColumnSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
 		scrollPane.setViewportView(table);
 		
-		table_1 = new JTable();
+		
+		
 		table_1.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"0013", null},
@@ -351,7 +354,11 @@ public class main extends JFrame {
 				"Address", "Value"
 			}
 		));
+		
+		scrollPane_1.setViewportView(txtrCode);
 		scrollPane_2.setViewportView(table_1);
+		scrollPane_3.setViewportView(txtrOpcode);
+		
 		panel.setLayout(null);
 		panel.add(btnEnter);
 		panel.add(label_2);
@@ -359,44 +366,11 @@ public class main extends JFrame {
 		panel.add(label_3);
 		panel.add(lblOpcode_1);
 		panel.add(scrollPane_3);
-		
-		
-		scrollPane_3.setViewportView(txtrOpcode);
-		txtrOpcode.setEditable(false);
 		panel.add(scrollPane_2);
-		
-		JLabel label = new JLabel("Code:");
-		label.setBounds(31, 43, 49, 14);
 		panel.add(label);
-		
-		JScrollPane scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(31, 68, 263, 120);
 		panel.add(scrollPane_1);
+		panel.add(btnInitializeValues);
 		
-		
-		
-		scrollPane_1.setViewportView(txtrCode);
-		
-		JPanel panel_1 = new JPanel();
-		tabbedPane.addTab("Execute", null, panel_1, null);
-		
-		JLabel lblOpcode = new JLabel("Code:");
-		lblOpcode.setBounds(30, 26, 63, 14);
-		
-		
-		
-		JButton btnNewButton = new JButton("Single-Step");
-		btnNewButton.setBounds(30, 362, 121, 23);
-		
-		JButton btnFullExecution = new JButton("Full Execution");
-		btnFullExecution.setBounds(161, 362, 115, 23);
-		
-		JLabel lblPipelineMap = new JLabel("Pipeline Map:");
-		lblPipelineMap.setBounds(305, 26, 115, 14);
-		
-		JTextArea txtrPipeline = new JTextArea();
-		txtrPipeline.setBounds(305, 51, 272, 122);
-		txtrPipeline.setEditable(false);
 		panel_1.setLayout(null);
 		panel_1.add(btnNewButton);
 		panel_1.add(btnFullExecution);
@@ -404,14 +378,14 @@ public class main extends JFrame {
 		panel_1.add(lblOpcode);
 		panel_1.add(lblPipelineMap);
 		panel_1.add(txtrPipeline);
-		
-		JLabel lblMipsRegisters = new JLabel("MIPS64 Registers:");
-		lblMipsRegisters.setBounds(305, 198, 131, 14);
+		panel_1.add(txtrRegisters);
 		panel_1.add(lblMipsRegisters);
 		
-		JTextArea txtrRegisters = new JTextArea();
-		txtrRegisters.setBounds(305, 223, 272, 128);
+		tabbedPane.addTab("Execute", null, panel_1, null);
+		
+		txtrOpcode.setEditable(false);
 		txtrRegisters.setEditable(false);
-		panel_1.add(txtrRegisters);
+		txtrPipeline.setEditable(false);
 	}
 }
+
