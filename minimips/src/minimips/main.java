@@ -43,6 +43,7 @@ public class main extends JFrame {
 	private String[] pcHex;
 	private String[] labels;
 	private String[] registers = new String[32]; 
+	private boolean error;
 
 	public String[] getRegisters() {
 		return registers;
@@ -72,15 +73,23 @@ public class main extends JFrame {
 			}
 		});
 	}
+	
+	public void initializeRegisters()
+	{
+		for (int x = 0; x < 32; x++)
+			this.registers[x] = "0000000000000000";
+	}
+	
+	public void initializeRegister(int index)
+	{
+		this.registers[index] = "0000000000000000";
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public main() {
 		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Grace\\Documents\\OTHERS\\Block\\A\\J\\z4.jpg"));
-		
-		for (int x = 0; x < 32; x++)
-			this.registers[x] = "0000000000000000";
 		
 		setTitle("mH1nh1m1pSxZc");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -117,14 +126,58 @@ public class main extends JFrame {
 		JTextArea txtrRegisters = new JTextArea();
 		JButton btnInitializeValues = new JButton("Initialize Values");
 		
+		this.initializeRegisters();
+		
 		btnInitializeValues.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				error = false;
 				registers[0] = "0000000000000000";
 				table.getModel().setValueAt(registers[0], 0, 1);
 				for (int a = 1; a < 32; a++)
 				{
-					registers[a] = table.getModel().getValueAt(a, 1).toString();
-					System.out.println("R" + a + ": " + registers[a]);
+					//registers[a] = table.getModel().getValueAt(a, 1).toString();
+					//if (registers[a].length() != 16)
+					if (table.getModel().getValueAt(a, 1).toString().length() != 16)
+					{
+						error = true;
+						System.out.println("ERROR A");
+					}
+					else
+					{
+						for (int b = 0; b < 16; b++)
+						{
+							if (table.getModel().getValueAt(a, 1).toString().charAt(b) != '0' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '1' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '2' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '3' && 
+									table.getModel().getValueAt(a, 1).toString().charAt(b) != '4' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '5' && 
+									table.getModel().getValueAt(a, 1).toString().charAt(b) != '6' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '7' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '8' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '9' && table.getModel().getValueAt(a, 1).toString().charAt(b) != 'A' && 
+									table.getModel().getValueAt(a, 1).toString().charAt(b) != 'B' && table.getModel().getValueAt(a, 1).toString().charAt(b) != 'C' && table.getModel().getValueAt(a, 1).toString().charAt(b) != 'D' && table.getModel().getValueAt(a, 1).toString().charAt(b) != 'E' && table.getModel().getValueAt(a, 1).toString().charAt(b) != 'F')
+							{
+								error = true;
+								System.out.println("ERROR B");
+								break;
+							}
+						}
+					}
+					if (error)
+					{
+						initializeRegister(a);
+						System.out.println("Initialized R" + a + " to " + registers[a]);
+						JOptionPane.showMessageDialog(new JFrame(), "Error!");
+						table.getModel().setValueAt(registers[a], a, 1);
+						break;
+					}
+					else
+					{
+						registers[a] = table.getModel().getValueAt(a, 1).toString();
+						table.getModel().setValueAt(registers[a], a, 1);
+					}
+					//table.getModel().setValueAt(registers[a], a, 1);
+					
+					
+				}
+				
+				for (int c = 0; c < 32; c++)
+				{
+					System.out.println("R" + c + ": " + registers[c]);
 				}
 			}
 		});
