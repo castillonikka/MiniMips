@@ -109,6 +109,7 @@ public class Opcode {
 	public void setPc(int pc) {
 		this.pc = pc;
 	}
+	
 	// Methods
 	public String convertToBinary(int num)
 	{

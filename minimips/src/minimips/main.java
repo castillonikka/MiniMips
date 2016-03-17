@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
 import javax.swing.JOptionPane;
@@ -45,6 +46,7 @@ public class main extends JFrame {
 	private String[] registers = new String[32]; 
 	private boolean error;
 	private JTable table_2;
+	private ArrayList<Memory> data = new ArrayList<Memory>();
 
 	public String[] getRegisters() {
 		return registers;
@@ -85,6 +87,36 @@ public class main extends JFrame {
 	{
 		this.registers[index] = "0000000000000000";
 	}
+	
+	public String convertToBinary(int num)
+	{
+		String binary;
+		
+		return binary = Integer.toBinaryString(num); 
+	}
+	
+	public String convertToHex(String num)
+	{
+		String hex;
+		
+		return hex = (Integer.toHexString(Integer.parseInt(num, 2))).toUpperCase();
+	}
+	
+	public void initializeMemory()
+	{
+		System.out.println("ENTERED");
+		int value = 8192;
+		System.out.println(value);
+		for (int a = 0; a < 8192; a++)
+		{
+			this.data.add(new Memory());
+			this.data.get(a).setAddressHex(value);
+			this.data.get(a).setValue("0000000000000000");
+			//System.out.println(this.data.get(a).getAddressHex() + " " + this.data.get(a).getValue());
+			value++;
+			//System.out.println(value);
+		}
+	}
 
 	/**
 	 * Create the frame.
@@ -116,6 +148,16 @@ public class main extends JFrame {
 		JButton btnEnter = new JButton("Enter Program");
 		table = new JTable();
 		table_1 = new JTable();
+		table_1.setFillsViewportHeight(true);
+		DefaultTableModel model = new DefaultTableModel(new Object[]{"Memory Address", "Data"}, 0)
+		{
+			@Override
+ 		   public boolean isCellEditable(int row, int column) {
+ 		       if (column == 0)
+ 		    	   return false;
+ 		       else return true;
+ 		   }
+		};
 		JScrollPane scrollPane_1 = new JScrollPane();
 		JPanel panel_1 = new JPanel();
 		JLabel lblOpcode = new JLabel("Code:");
@@ -126,7 +168,18 @@ public class main extends JFrame {
 		JButton btnInitializeValues = new JButton("Initialize Values");
 		JTextArea textArea = new JTextArea();
 		
+		table_1.setModel(model);
+		
+		scrollPane_1.setViewportView(txtrCode);
+		scrollPane_2.setViewportView(table_1);
+		scrollPane_3.setViewportView(txtrOpcode);
+		
 		this.initializeRegisters();
+		this.initializeMemory();
+		for (int b = 0; b < 8192; b++)
+		{
+			model.addRow(new Object[]{data.get(b).getAddressHex(), data.get(b).getValue()});
+		}
 		
 		String sample = "IF\tID\tEX\tMEM\tWB\n\tIF\tID\tEX\tMEM\tWB\n";
 		
@@ -195,7 +248,7 @@ public class main extends JFrame {
 		
 		lblOpcode_1.setBounds(316, 43, 124, 14);
 		label_2.setBounds(31, 243, 49, 14);
-		label_3.setBounds(316, 243, 42, 14);
+		label_3.setBounds(316, 243, 109, 14);
 		scrollPane.setBounds(31, 263, 263, 146);
 		scrollPane_2.setBounds(316, 263, 263, 146);
 		scrollPane_3.setBounds(316, 68, 263, 120);
@@ -386,39 +439,13 @@ public class main extends JFrame {
 		table.setCellSelectionEnabled(true);
 		scrollPane.setViewportView(table);
 		
-		
-		
-		table_1.setModel(new DefaultTableModel(
+		/*table_1.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"0013", null},
-				{"0012", null},
-				{"0011", null},
-				{"0010", null},
-				{"000F", null},
-				{"000E", null},
-				{"000D", null},
-				{"000C", null},
-				{"000B", null},
-				{"000A", null},
-				{"0009", null},
-				{"0008", null},
-				{"0007", null},
-				{"0006", null},
-				{"0005", null},
-				{"0004", null},
-				{"0003", null},
-				{"0002", null},
-				{"0001", null},
-				{"0000", null},
 			},
 			new String[] {
 				"Address", "Value"
 			}
-		));
-		
-		scrollPane_1.setViewportView(txtrCode);
-		scrollPane_2.setViewportView(table_1);
-		scrollPane_3.setViewportView(txtrOpcode);
+		));*/
 		
 		panel.setLayout(null);
 		panel.add(btnEnter);
@@ -443,11 +470,16 @@ public class main extends JFrame {
 		tabbedPane.addTab("Execute", null, panel_1, null);
 		
 		txtrOpcode.setEditable(false);
+		
+		JButton btnInitializeData = new JButton("Initialize Data");
+		btnInitializeData.setBounds(377, 420, 137, 23);
+		panel.add(btnInitializeData);
 		JScrollPane scrollPane_4 = new JScrollPane();
 		scrollPane_4.setBounds(305, 51, 272, 128);
 		panel_1.add(scrollPane_4);
 		
 		table_2 = new JTable();
+		table_2.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 		table_2.setModel(new DefaultTableModel(
 			new Object[][] {
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
@@ -502,7 +534,7 @@ public class main extends JFrame {
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
 			},
 			new String[] {
-				"New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column"
+				"1", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column"
 			}
 		) {
 			boolean[] columnEditables = new boolean[] {
