@@ -43,23 +43,18 @@ public class main extends JFrame {
 	private String[] code;
 	private String[] pcHex;
 	private String[] labels;
-	private String[] registers = new String[32]; 
+	//private String[] registers = new String[32]; 
 	private boolean error;
+	private boolean memError;
 	private JTable table_2;
 	private ArrayList<Memory> data = new ArrayList<Memory>();
+	private ArrayList<Register> registers = new ArrayList<Register>();
 
-	public String[] getRegisters() {
-		return registers;
-	}
-
-	public void setRegisters(String[] registers) {
-		this.registers = registers;
-	}
-	
-	public void setValue (int index, String value)
+	/*public void setValue (int index, String value)
 	{
 		this.registers[index] = value;
-	}
+		this.registers.get(index).s
+	}*/
 
 	/**
 	 * Launch the application.
@@ -80,12 +75,17 @@ public class main extends JFrame {
 	public void initializeRegisters()
 	{
 		for (int x = 0; x < 32; x++)
-			this.registers[x] = "0000000000000000";
+		{
+			this.registers.add(new Register());
+			this.registers.get(x).setValue("0000000000000000");
+		}
+			//this.registers[x] = "0000000000000000";
 	}
 	
 	public void initializeRegister(int index)
 	{
-		this.registers[index] = "0000000000000000";
+		this.registers.get(index).setValue("0000000000000000");
+		//this.registers[index] = "0000000000000000";
 	}
 	
 	public String convertToBinary(int num)
@@ -117,12 +117,16 @@ public class main extends JFrame {
 			//System.out.println(value);
 		}
 	}
+	
+	public void initializeData(int index)
+	{
+		this.data.get(index).setValue("0000000000000000");
+	}
 
 	/**
 	 * Create the frame.
 	 */
 	public main() {
-		setIconImage(Toolkit.getDefaultToolkit().getImage("C:\\Users\\Grace\\Documents\\OTHERS\\Block\\A\\J\\z4.jpg"));
 		
 		setTitle("mH1nh1m1pSxZc");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -186,8 +190,9 @@ public class main extends JFrame {
 		btnInitializeValues.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				error = false;
-				registers[0] = "0000000000000000";
-				table.getModel().setValueAt(registers[0], 0, 1);
+				//registers[0] = "0000000000000000";
+				registers.get(0).setValue("0000000000000000");
+				table.getModel().setValueAt(registers.get(0).getValue(), 0, 1);
 				for (int a = 1; a < 32; a++)
 				{
 					//registers[a] = table.getModel().getValueAt(a, 1).toString();
@@ -215,15 +220,15 @@ public class main extends JFrame {
 					if (error)
 					{
 						initializeRegister(a);
-						System.out.println("Initialized R" + a + " to " + registers[a]);
+						System.out.println("Initialized R" + a + " to " + registers.get(a).getValue());
 						JOptionPane.showMessageDialog(new JFrame(), "Error!");
-						table.getModel().setValueAt(registers[a], a, 1);
+						table.getModel().setValueAt(registers.get(a).getValue(), a, 1);
 						break;
 					}
 					else
 					{
-						registers[a] = table.getModel().getValueAt(a, 1).toString();
-						table.getModel().setValueAt(registers[a], a, 1);
+						registers.get(a).setValue(table.getModel().getValueAt(a, 1).toString());
+						table.getModel().setValueAt(registers.get(a).getValue(), a, 1);
 					}
 					//table.getModel().setValueAt(registers[a], a, 1);
 					
@@ -232,7 +237,7 @@ public class main extends JFrame {
 				
 				for (int c = 0; c < 32; c++)
 				{
-					System.out.println("R" + c + ": " + registers[c]);
+					System.out.println("R" + c + ": " + registers.get(c).getValue());
 				}
 			}
 		});
@@ -390,38 +395,38 @@ public class main extends JFrame {
 		
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
-				{"R0 =", this.registers[0]},
-				{"R1 =", this.registers[1]},
-				{"R2 =", this.registers[2]},
-				{"R3 =", this.registers[3]},
-				{"R4 =", this.registers[4]},
-				{"R5 =", this.registers[5]},
-				{"R6 =", this.registers[6]},
-				{"R7 =", this.registers[7]},
-				{"R8 =", this.registers[8]},
-				{"R9 =", this.registers[9]},
-				{"R10 =", this.registers[10]},
-				{"R11 =", this.registers[11]},
-				{"R12 =", this.registers[12]},
-				{"R13 =", this.registers[13]},
-				{"R14 =", this.registers[14]},
-				{"R15 =", this.registers[15]},
-				{"R16 =", this.registers[16]},
-				{"R17 =", this.registers[17]},
-				{"R18 =", this.registers[18]},
-				{"R19 =", this.registers[19]},
-				{"R20 =", this.registers[20]},
-				{"R21 =", this.registers[21]},
-				{"R22 =", this.registers[22]},
-				{"R23 =", this.registers[23]},
-				{"R24 =", this.registers[24]},
-				{"R25 =", this.registers[25]},
-				{"R26 =", this.registers[26]},
-				{"R27 =", this.registers[27]},
-				{"R28 =", this.registers[28]},
-				{"R29 =", this.registers[29]},
-				{"R30 =", this.registers[30]},
-				{"R31 =", this.registers[31]}
+				{"R0 =", this.registers.get(0).getValue()},
+				{"R1 =", this.registers.get(1).getValue()},
+				{"R2 =", this.registers.get(2).getValue()},
+				{"R3 =", this.registers.get(3).getValue()},
+				{"R4 =", this.registers.get(4).getValue()},
+				{"R5 =", this.registers.get(5).getValue()},
+				{"R6 =", this.registers.get(6).getValue()},
+				{"R7 =", this.registers.get(7).getValue()},
+				{"R8 =", this.registers.get(8).getValue()},
+				{"R9 =", this.registers.get(9).getValue()},
+				{"R10 =", this.registers.get(10).getValue()},
+				{"R11 =", this.registers.get(11).getValue()},
+				{"R12 =", this.registers.get(12).getValue()},
+				{"R13 =", this.registers.get(13).getValue()},
+				{"R14 =", this.registers.get(14).getValue()},
+				{"R15 =", this.registers.get(15).getValue()},
+				{"R16 =", this.registers.get(16).getValue()},
+				{"R17 =", this.registers.get(17).getValue()},
+				{"R18 =", this.registers.get(18).getValue()},
+				{"R19 =", this.registers.get(19).getValue()},
+				{"R20 =", this.registers.get(20).getValue()},
+				{"R21 =", this.registers.get(21).getValue()},
+				{"R22 =", this.registers.get(22).getValue()},
+				{"R23 =", this.registers.get(23).getValue()},
+				{"R24 =", this.registers.get(24).getValue()},
+				{"R25 =", this.registers.get(25).getValue()},
+				{"R26 =", this.registers.get(26).getValue()},
+				{"R27 =", this.registers.get(27).getValue()},
+				{"R28 =", this.registers.get(28).getValue()},
+				{"R29 =", this.registers.get(29).getValue()},
+				{"R30 =", this.registers.get(30).getValue()},
+				{"R31 =", this.registers.get(31).getValue()}
 			},
 			new String[] {
 				"Registers", "Values"
@@ -472,6 +477,55 @@ public class main extends JFrame {
 		txtrOpcode.setEditable(false);
 		
 		JButton btnInitializeData = new JButton("Initialize Data");
+		btnInitializeData.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				memError = false;
+				for (int a = 1; a < 8192; a++)
+				{
+					//registers[a] = table_1.getModel().getValueAt(a, 1).toString();
+					//if (registers[a].length() != 16)
+					if (table_1.getModel().getValueAt(a, 1).toString().length() != 16)
+					{
+						memError = true;
+						System.out.println("memError A");
+					}
+					else
+					{
+						for (int b = 0; b < 16; b++)
+						{
+							if (table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '0' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '1' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '2' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '3' && 
+									table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '4' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '5' && 
+									table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '6' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '7' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '8' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '9' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'A' && 
+									table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'B' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'C' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'D' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'E' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != 'F')
+							{
+								memError = true;
+								System.out.println("memError B");
+								break;
+							}
+						}
+					}
+					if (memError)
+					{
+						// STOPPED HERE!!!!!!!!!!!!!!!!!!!!!!! pt2
+						initializeData(a);
+						System.out.println("Initialized Memory Address" + a + " to " + data.get(a).getValue());
+						JOptionPane.showMessageDialog(new JFrame(), "Error!!");
+						table_1.getModel().setValueAt(data.get(a).getValue(), a, 1);
+						break;
+					}
+					else
+					{
+						data.get(a).setValue(table_1.getModel().getValueAt(a, 1).toString());
+						table_1.getModel().setValueAt(data.get(a).getValue(), a, 1);
+					}
+				}
+				
+				for (int c = 0; c < 8192; c++)
+				{
+					System.out.println("Memory" + c + ": " + data.get(c).getValue());
+				}
+			}
+		});
 		btnInitializeData.setBounds(377, 420, 137, 23);
 		panel.add(btnInitializeData);
 		JScrollPane scrollPane_4 = new JScrollPane();
@@ -554,8 +608,6 @@ public class main extends JFrame {
 		textArea.setTabSize(3);
 		textArea.setEditable(false);
 		scrollPane_5.setViewportView(textArea);
-		
-		//scrollPane_4.setViewportView(table_2);
 	}
 }
 
