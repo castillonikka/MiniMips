@@ -14,7 +14,10 @@ public class Cycle {
 	private String EX_MEM_IR;
 	private String EX_MEM_ALU;
 	private String EX_MEM_COND;
+	private String EX_MEM_B;
 	private String MEM_WB_IR;
+	private String MEM_WB_ALU;
+	private String MEM_ALUoutput;
 	private String MEM_WB_LMD;
 	private String code;
 	private String opcode;
@@ -75,12 +78,31 @@ public class Cycle {
 	public String getPC() {
 		return PC;
 	}
+	public String getEX_MEM_B() {
+		return EX_MEM_B;
+	}
+	public void setEX_MEM_B(String eX_MEM_B) {
+		EX_MEM_B = eX_MEM_B;
+	}
+	public String getMEM_WB_ALU() {
+		return MEM_WB_ALU;
+	}
+	public void setMEM_WB_ALU(String mEM_WB_ALU) {
+		MEM_WB_ALU = mEM_WB_ALU;
+	}
+	public String getMEM_ALUoutput() {
+		return MEM_ALUoutput;
+	}
+	public void setMEM_ALUoutput(String mEM_ALUoutput) {
+		MEM_ALUoutput = mEM_ALUoutput;
+	}
 	
 	// Methods
 	public void generateCycle()
 	{
 		
 	}
+	
 	
 	
 }

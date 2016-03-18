@@ -42,7 +42,7 @@ public class main extends JFrame {
 	private int[] pc;
 	private String[] code;
 	private String[] pcHex;
-	private String[] labels;
+	private String[] opcode;
 	//private String[] registers = new String[32]; 
 	private boolean error;
 	private boolean memError;
@@ -50,6 +50,7 @@ public class main extends JFrame {
 	private ArrayList<Memory> data = new ArrayList<Memory>();
 	private ArrayList<Register> registers = new ArrayList<Register>();
 	private ArrayList<Cycle> cycles = new ArrayList<Cycle>();
+	private ArrayList<Code> codes = new ArrayList<Code>();
 
 	/*public void setValue (int index, String value)
 	{
@@ -277,7 +278,6 @@ public class main extends JFrame {
 				{
 					pc = new int[100];
 					pcHex = new String[100];
-					labels = new String[100];
 					
 					txtrCode2.setText(txtrCode.getText());
 					code = txtrCode.getText().split("\\n");
@@ -285,6 +285,8 @@ public class main extends JFrame {
 					
 					for (int a = 0; a < code.length; a++)
 					{
+						codes.add(new Code());
+						
 						pc[a] = 4 * a;
 						String tempBin = this.convertToBinary(pc[a]);
 						pcHex[a] = this.convertToHex(tempBin);
@@ -293,13 +295,18 @@ public class main extends JFrame {
 						String instruction = code[a].split(" ")[0];
 						System.out.println(instruction);
 						
+						codes.get(a).setPcHex(pcHex[a]);
+						codes.get(a).setLine(code[0]);
+						codes.get(a).setInst(instruction);
 						
 						if (instruction.equals("BC") || instruction.equals("bc"))
 						{
 							String label = code[a].split(" ")[1];
 							System.out.println(label);
+							codes.get(a).setLabel(label);
 							for (int b = 0; b < code.length; b++)
 							{
+								// STOPPED HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 								String lbl = code[b].split(" ")[0];
 								lbl = lbl.substring(0, lbl.length()-1);
 								System.out.println(lbl);
@@ -310,6 +317,7 @@ public class main extends JFrame {
 									System.out.println(target + " and " + pcBranch + " and " + code[a]);
 									Opcode opc = new Opcode (code[a], pcBranch, target);
 									String outputOpc = opc.firstWord();
+									codes.get(a).setOpcode(outputOpc);
 									
 									System.out.println("Opcode is: " + outputOpc);
 									if (opc.isError() == true)
@@ -337,6 +345,7 @@ public class main extends JFrame {
 									System.out.println(target + " and " + pcBranch + " and " + code[a]);
 									Opcode opc = new Opcode (code[a], pcBranch, target);
 									String outputOpc = opc.firstWord();
+									codes.get(a).setOpcode(outputOpc);
 									
 									System.out.println("Opcode is: " + outputOpc);
 									if (opc.isError() == true)
@@ -352,6 +361,7 @@ public class main extends JFrame {
 						{
 							Opcode opc = new Opcode(code[a]);
 							String outputOpc = opc.firstWord();
+							codes.get(a).setOpcode(outputOpc);
 							
 							System.out.println("Opcode is: " + outputOpc);
 							if (opc.isError() == true)
@@ -362,6 +372,10 @@ public class main extends JFrame {
 							else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 						}
 					}
+					System.out.println("OPCODES ARE:");
+					for (int x = 0; x < code.length; x++)
+						System.out.println("Line " + (x+1) + " -- " + codes.get(x).getOpcode());
+					
 				} catch (StringIndexOutOfBoundsException e)
 				{
 					txtrOpcode.setText("Error!\n");
@@ -390,6 +404,9 @@ public class main extends JFrame {
 				String display = "CYCLE " + pCycle.getNum() + "\nInstruction Fetch\nIF/ID.IR = " + pCycle.getIF_ID_IR() + "\nIF/ID.NPC = " + pCycle.getIF_ID_NPC() + "\nPC = " + pCycle.getPC() + "\n\nInstruction Decode\nID/EX.A = " + pCycle.getID_EX_A() + "\nID/EX.B = " + pCycle.getID_EX_B() + "\nID/EX.IMM = " + pCycle.getID_EX_IMM() + "\nID/EX.IR = " + pCycle.getID_EX_IR() + "\nID/EX.NPC = " + pCycle.getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + pCycle.getEX_MEM_ALU() + "\nEX/MEM.IR = " + pCycle.getEX_MEM_IR() + "\nEX/MEM.Cond = " + pCycle.getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + pCycle.getMEM_WB_LMD() + "\nMEM/WB.IR = " + pCycle.getMEM_WB_IR() + "\n\nWrite-Back\n\n~~~~~~~~~~~~~";
 				textArea.append(display);*/
 				cycles.add(new Cycle());
+				//code = txtrCode.getText().split("\\n");
+				opcode = txtrOpcode.getText().split("\\n");
+				
 			}
 		});
 		
@@ -602,11 +619,7 @@ public class main extends JFrame {
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
-			},
-			/*new String[] {
-				"1", "2", "3", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column", "New column"
-			}*/
-			columns
+			}, columns
 		) {
 			boolean[] columnEditables = new boolean[] {
 				false, false, false, false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true
