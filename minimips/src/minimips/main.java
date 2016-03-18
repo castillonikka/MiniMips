@@ -243,15 +243,6 @@ public class main extends JFrame {
 			}
 		});
 		
-		btnFullExecution.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				Cycle pCycle = new Cycle();
-				String display = "CYCLE " + pCycle.getNum() + "\nInstruction Fetch\nIF/ID.IR = " + pCycle.getIF_ID_IR() + "\nIF/ID.NPC = " + pCycle.getIF_ID_NPC() + "\nPC = " + pCycle.getPC() + "\n\nInstruction Decode\nID/EX.A = " + pCycle.getID_EX_A() + "\nID/EX.B = " + pCycle.getID_EX_B() + "\nID/EX.IMM = " + pCycle.getID_EX_IMM() + "\nID/EX.IR = " + pCycle.getID_EX_IR() + "\nID/EX.NPC = " + pCycle.getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + pCycle.getEX_MEM_ALU() + "\nEX/MEM.IR = " + pCycle.getEX_MEM_IR() + "\nEX/MEM.Cond = " + pCycle.getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + pCycle.getMEM_WB_LMD() + "\nMEM/WB.IR = " + pCycle.getMEM_WB_IR() + "\n\nWrite-Back\n\n~~~~~~~~~~~~~";
-				textArea.append(display);
-			}
-		});
-		
-		
 		lblOpcode_1.setBounds(316, 43, 124, 14);
 		label_2.setBounds(31, 243, 49, 14);
 		label_3.setBounds(316, 243, 109, 14);
@@ -390,6 +381,15 @@ public class main extends JFrame {
 				String hex;
 				
 				return hex = Integer.toHexString(Integer.parseInt(num, 2));
+			}
+		});
+		
+		btnFullExecution.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				/*Cycle pCycle = new Cycle();
+				String display = "CYCLE " + pCycle.getNum() + "\nInstruction Fetch\nIF/ID.IR = " + pCycle.getIF_ID_IR() + "\nIF/ID.NPC = " + pCycle.getIF_ID_NPC() + "\nPC = " + pCycle.getPC() + "\n\nInstruction Decode\nID/EX.A = " + pCycle.getID_EX_A() + "\nID/EX.B = " + pCycle.getID_EX_B() + "\nID/EX.IMM = " + pCycle.getID_EX_IMM() + "\nID/EX.IR = " + pCycle.getID_EX_IR() + "\nID/EX.NPC = " + pCycle.getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + pCycle.getEX_MEM_ALU() + "\nEX/MEM.IR = " + pCycle.getEX_MEM_IR() + "\nEX/MEM.Cond = " + pCycle.getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + pCycle.getMEM_WB_LMD() + "\nMEM/WB.IR = " + pCycle.getMEM_WB_IR() + "\n\nWrite-Back\n\n~~~~~~~~~~~~~";
+				textArea.append(display);*/
+				cycles.add(new Cycle());
 			}
 		});
 		
