@@ -49,6 +49,7 @@ public class main extends JFrame {
 	private JTable table_2;
 	private ArrayList<Memory> data = new ArrayList<Memory>();
 	private ArrayList<Register> registers = new ArrayList<Register>();
+	private ArrayList<Cycle> cycles = new ArrayList<Cycle>();
 
 	/*public void setValue (int index, String value)
 	{

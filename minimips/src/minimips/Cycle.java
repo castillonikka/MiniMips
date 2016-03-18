@@ -16,16 +16,16 @@ public class Cycle {
 	private String EX_MEM_COND;
 	private String MEM_WB_IR;
 	private String MEM_WB_LMD;
-	private String inst;
+	private String code;
 	private String opcode;
 	private int num;
 	
 	// Getters and Setters
-	public String getInst() {
-		return inst;
+	public String getCode() {
+		return code;
 	}
-	public void setInst(String inst) {
-		this.inst = inst;
+	public void setCode(String inst) {
+		this.code = inst;
 	}
 	public int getNum() {
 		return this.num;
