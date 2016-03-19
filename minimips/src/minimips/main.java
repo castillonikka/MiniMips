@@ -51,6 +51,7 @@ public class main extends JFrame {
 	private ArrayList<Register> registers = new ArrayList<Register>();
 	private ArrayList<Cycle> cycles = new ArrayList<Cycle>();
 	private ArrayList<Code> codes = new ArrayList<Code>();
+	private boolean dependency;
 
 	/*public void setValue (int index, String value)
 	{
@@ -123,6 +124,60 @@ public class main extends JFrame {
 	public void initializeData(int index)
 	{
 		this.data.get(index).setValue("0000000000000000");
+	}
+	
+	public void dataHazard(ArrayList<Code> codes)
+	{
+		//dependency = false;
+		System.out.println("Size is: " + codes.size());
+		for (int x = 0; x < 50; x++)
+		{
+			for (int y = 0; y < 50; y++)
+				table_2.setValueAt("", x, y);
+		}
+		
+		for (int a = 0; a < codes.size(); a++)
+		{
+			if (a == 0 || dependency == false)
+			{
+				table_2.setValueAt("IF", a, a+0);
+				table_2.setValueAt("ID", a, a+1);
+				table_2.setValueAt("EX", a, a+2);
+				table_2.setValueAt("MEM", a, a+3);
+				table_2.setValueAt("WB", a, a+4);
+				//System.out.println(codes.get(a).getInst());
+			}
+			
+			/*switch (codes.get(a).getInst())
+			{
+				case "DADDU":
+				case "daddu":
+				case "SLT":
+				case "slt":
+				case "SELEQZ":
+				case "seleqz":
+				case "DMULU":
+				case "dmulu":
+				case "DMUHU":
+				case "dmuhu":
+					for (int b = 0; b < a; b++)
+					{
+						if (codes.get(a).getRs().equals(codes.get(b).getRt()) && (codes.get(b).getInst().toUpperCase().equals("DADDIU")))
+						{
+							dependency = true;
+							table_2.setValueAt("IF", a, a);
+							table_2.setValueAt("*", a, a+1);
+							table_2.setValueAt("*", a, a+2);
+							table_2.setValueAt("*", a, a+3);
+							table_2.setValueAt("ID", a, a+4);
+							table_2.setValueAt("EX", a, a+5);
+							table_2.setValueAt("MEM", a, a+6);
+							table_2.setValueAt("WB", a, a+7);
+						}
+							
+					}
+			}*/
+		}
 	}
 
 	/**
@@ -232,9 +287,6 @@ public class main extends JFrame {
 						registers.get(a).setValue(table.getModel().getValueAt(a, 1).toString());
 						table.getModel().setValueAt(registers.get(a).getValue(), a, 1);
 					}
-					//table.getModel().setValueAt(registers[a], a, 1);
-					
-					
 				}
 				
 				for (int c = 0; c < 32; c++)
@@ -276,6 +328,7 @@ public class main extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try
 				{
+					codes.clear();
 					pc = new int[100];
 					pcHex = new String[100];
 					
@@ -427,14 +480,9 @@ public class main extends JFrame {
 				/*Cycle pCycle = new Cycle();
 				String display = "CYCLE " + pCycle.getNum() + "\nInstruction Fetch\nIF/ID.IR = " + pCycle.getIF_ID_IR() + "\nIF/ID.NPC = " + pCycle.getIF_ID_NPC() + "\nPC = " + pCycle.getPC() + "\n\nInstruction Decode\nID/EX.A = " + pCycle.getID_EX_A() + "\nID/EX.B = " + pCycle.getID_EX_B() + "\nID/EX.IMM = " + pCycle.getID_EX_IMM() + "\nID/EX.IR = " + pCycle.getID_EX_IR() + "\nID/EX.NPC = " + pCycle.getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + pCycle.getEX_MEM_ALU() + "\nEX/MEM.IR = " + pCycle.getEX_MEM_IR() + "\nEX/MEM.Cond = " + pCycle.getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + pCycle.getMEM_WB_LMD() + "\nMEM/WB.IR = " + pCycle.getMEM_WB_IR() + "\n\nWrite-Back\n\n~~~~~~~~~~~~~";
 				textArea.append(display);*/
-				cycles.add(new Cycle());
 				//code = txtrCode.getText().split("\\n");
-				opcode = txtrOpcode.getText().split("\\n");
-				table_2.setValueAt("IF", 0, 0);
-				table_2.setValueAt("ID", 0, 1);
-				table_2.setValueAt("EX", 0, 2);
-				table_2.setValueAt("MEM", 0, 3);
-				table_2.setValueAt("WB", 0, 4);
+				//opcode = txtrOpcode.getText().split("\\n");
+				dataHazard(codes);
 			}
 		});
 		
@@ -489,14 +537,6 @@ public class main extends JFrame {
 		table.setColumnSelectionAllowed(true);
 		table.setCellSelectionEnabled(true);
 		scrollPane.setViewportView(table);
-		
-		/*table_1.setModel(new DefaultTableModel(
-			new Object[][] {
-			},
-			new String[] {
-				"Address", "Value"
-			}
-		));*/
 		
 		panel.setLayout(null);
 		panel.add(btnEnter);
