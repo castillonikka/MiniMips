@@ -296,7 +296,7 @@ public class main extends JFrame {
 						System.out.println(instruction);
 						
 						codes.get(a).setPcHex(pcHex[a]);
-						codes.get(a).setLine(code[0]);
+						codes.get(a).setLine(code[a]);
 						codes.get(a).setInst(instruction);
 						
 						if (instruction.equals("BC") || instruction.equals("bc"))
@@ -325,7 +325,15 @@ public class main extends JFrame {
 										txtrOpcode.setText(opc.getErrorMessage());
 										JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
 									}
-									else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+									else 
+									{
+										txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+										codes.get(a).setImm(opc.getImm());
+										codes.get(a).setRd(opc.getRd());
+										codes.get(a).setRs(opc.getRs());
+										codes.get(a).setRt(opc.getRt());
+										codes.get(a).printAttributes();
+									}
 								}
 							}
 						}
@@ -353,7 +361,15 @@ public class main extends JFrame {
 										txtrOpcode.setText(opc.getErrorMessage());
 										JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
 									}
-									else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+									else 
+									{
+										txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+										codes.get(a).setImm(opc.getImm());
+										codes.get(a).setRd(opc.getRd());
+										codes.get(a).setRs(opc.getRs());
+										codes.get(a).setRt(opc.getRt());
+										codes.get(a).printAttributes();
+									}
 								}
 							}
 						}
@@ -369,12 +385,20 @@ public class main extends JFrame {
 								txtrOpcode.setText(opc.getErrorMessage());
 								JOptionPane.showMessageDialog(new JFrame(), opc.getErrorMessage());
 							}
-							else txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+							else 
+							{
+								txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
+								codes.get(a).setImm(opc.getImm());
+								codes.get(a).setRd(opc.getRd());
+								codes.get(a).setRs(opc.getRs());
+								codes.get(a).setRt(opc.getRt());
+								codes.get(a).printAttributes();
+							}
 						}
 					}
-					System.out.println("OPCODES ARE:");
+					/*System.out.println("OPCODES ARE:");
 					for (int x = 0; x < code.length; x++)
-						System.out.println("Line " + (x+1) + " -- " + codes.get(x).getOpcode());
+						System.out.println("Line " + (x+1) + " -- " + codes.get(x).getOpcode());*/
 					
 				} catch (StringIndexOutOfBoundsException e)
 				{
@@ -406,7 +430,11 @@ public class main extends JFrame {
 				cycles.add(new Cycle());
 				//code = txtrCode.getText().split("\\n");
 				opcode = txtrOpcode.getText().split("\\n");
-				
+				table_2.setValueAt("IF", 0, 0);
+				table_2.setValueAt("ID", 0, 1);
+				table_2.setValueAt("EX", 0, 2);
+				table_2.setValueAt("MEM", 0, 3);
+				table_2.setValueAt("WB", 0, 4);
 			}
 		});
 		

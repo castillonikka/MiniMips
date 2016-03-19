@@ -56,6 +56,22 @@ public class Opcode {
 	
 	// Getters and Setters
 	
+	public String getRs() {
+		return rs;
+	}
+
+	public String getRd() {
+		return rd;
+	}
+
+	public String getRt() {
+		return rt;
+	}
+
+	public String getImm() {
+		return imm;
+	}
+	
 	public String getBranchLabel() {
 		return branchLabel;
 	}

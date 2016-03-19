@@ -4,13 +4,15 @@ public class Code {
 
 	private String pcHex;
 	private String opcode;
-	private String reg1;
-	private String reg2;
-	private String reg3;
+	private String rs;
+	private String rt;
+	private String rd;
 	private String label;
 	private String imm;
 	private String inst;
 	private String line;
+	private int pcTarget;
+	private int pcInt;
 	
 	// Getters and Setters
 	public String getPcHex() {
@@ -19,29 +21,29 @@ public class Code {
 	public void setPcHex(String pcHex) {
 		this.pcHex = pcHex;
 	}
+	public String getRs() {
+		return rs;
+	}
+	public void setRs(String rs) {
+		this.rs = rs;
+	}
+	public String getRt() {
+		return rt;
+	}
+	public void setRt(String rt) {
+		this.rt = rt;
+	}
+	public String getRd() {
+		return rd;
+	}
+	public void setRd(String rd) {
+		this.rd = rd;
+	}
 	public String getOpcode() {
 		return opcode;
 	}
 	public void setOpcode(String opcode) {
 		this.opcode = opcode;
-	}
-	public String getReg1() {
-		return reg1;
-	}
-	public void setReg1(String reg1) {
-		this.reg1 = reg1;
-	}
-	public String getReg2() {
-		return reg2;
-	}
-	public void setReg2(String reg2) {
-		this.reg2 = reg2;
-	}
-	public String getReg3() {
-		return reg3;
-	}
-	public void setReg3(String reg3) {
-		this.reg3 = reg3;
 	}
 	public String getLabel() {
 		return label;
@@ -67,6 +69,31 @@ public class Code {
 	public void setLine(String line) {
 		this.line = line;
 	}
+	public int getPcInt() {
+		return pcInt;
+	}
+	public void setPcInt(int pcInt) {
+		this.pcInt = pcInt;
+	}
+	public int getPcTarget() {
+		return pcTarget;
+	}
+	public void setPcTarget(int pcTarget) {
+		this.pcTarget = pcTarget;
+	}
 	
+	// Methods
 	
+	public void printAttributes()
+	{
+		System.out.println("DETAILS ARE:");
+		System.out.println("LINE -- " + this.line);
+		System.out.println("INST -- " + this.inst);
+		System.out.println("RD -- " + this.rd);
+		System.out.println("RS -- " + this.rs);
+		System.out.println("RT -- " + this.rt);
+		System.out.println("IMM -- " + this.imm);
+		System.out.println("LABEL -- " + this.label);
+		System.out.println("PC -- " + this.pcHex);
+	}
 }
