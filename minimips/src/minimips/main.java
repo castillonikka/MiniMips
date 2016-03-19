@@ -151,36 +151,6 @@ public class main extends JFrame {
 				table_2.setValueAt("WB", a, a+4);
 				//System.out.println(codes.get(a).getInst());
 			}
-			
-			/*switch (codes.get(a).getInst())
-			{
-				case "DADDU":
-				case "daddu":
-				case "SLT":
-				case "slt":
-				case "SELEQZ":
-				case "seleqz":
-				case "DMULU":
-				case "dmulu":
-				case "DMUHU":
-				case "dmuhu":
-					for (int b = 0; b < a; b++)
-					{
-						if (codes.get(a).getRs().equals(codes.get(b).getRt()) && (codes.get(b).getInst().toUpperCase().equals("DADDIU")))
-						{
-							dependency = true;
-							table_2.setValueAt("IF", a, a);
-							table_2.setValueAt("*", a, a+1);
-							table_2.setValueAt("*", a, a+2);
-							table_2.setValueAt("*", a, a+3);
-							table_2.setValueAt("ID", a, a+4);
-							table_2.setValueAt("EX", a, a+5);
-							table_2.setValueAt("MEM", a, a+6);
-							table_2.setValueAt("WB", a, a+7);
-						}
-							
-					}
-			}*/
 		}
 		
 		for (int c = 0; c < cols; c++)
@@ -356,13 +326,26 @@ public class main extends JFrame {
 								
 							case "LD":
 								String address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
-								cycles.get(x).setMEM_WB_LMD(data.get(data.indexOf(address)).getValue());
+								int a = 0;
+								for (a = 0; a < data.size(); a++)
+								{
+									if (data.get(a).getAddressHex().equals(address))
+										break;
+								}
+								cycles.get(x).setMEM_WB_LMD(data.get(a).getValue());
 								break;
 								
 							case "SD":
 								address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
-								data.get(data.indexOf(address)).setValue(cycles.get(x-1).getEX_MEM_B());
-								table_1.getModel().setValueAt(cycles.get(x-1).getEX_MEM_B(), data.indexOf(address), 1);
+								/*System.out.println("ADDRESS " + address);
+								System.out.println("INDEX OF " + data.indexOf(address));*/
+								for (a = 0; a < data.size(); a++)
+								{
+									if (data.get(a).getAddressHex().equals(address))
+										break;
+								}
+								data.get(a).setValue(cycles.get(x-1).getEX_MEM_B());
+								table_1.getModel().setValueAt(cycles.get(x-1).getEX_MEM_B(), a, 1);
 								cycles.get(x).setWbDisplay("Memory " + address + " = " + cycles.get(x).getEX_MEM_B());
 								break;
 						}
@@ -386,6 +369,13 @@ public class main extends JFrame {
 							case "DADDIU":
 								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
 								registers.get(reg2).setValue(cycles.get(x-1).getMEM_ALUoutput());
+								System.out.println("WB TO REG " + reg2);
+								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
+								break;
+							case "LD":
+								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
+								registers.get(reg2).setValue(cycles.get(x-1).getMEM_WB_LMD());
 								System.out.println("WB TO REG " + reg2);
 								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
 								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
@@ -837,10 +827,10 @@ public class main extends JFrame {
 					}
 				}
 				
-				for (int c = 0; c < 8192; c++)
+				/*for (int c = 0; c < 8192; c++)
 				{
 					System.out.println("Memory" + c + ": " + data.get(c).getValue());
-				}
+				}*/
 			}
 		});
 		btnInitializeData.setBounds(377, 420, 137, 23);
