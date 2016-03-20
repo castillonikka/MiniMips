@@ -37,6 +37,7 @@ import java.awt.Toolkit;
 
 public class main extends JFrame {
 
+	// NOTE: Attributes
 	private JPanel contentPane;
 	private JTable table;
 	private JTable table_1;
@@ -44,7 +45,6 @@ public class main extends JFrame {
 	private String[] code;
 	private String[] pcHex;
 	private String[] opcode;
-	//private String[] registers = new String[32]; 
 	private boolean error;
 	private boolean memError;
 	private JTable table_2;
@@ -54,12 +54,6 @@ public class main extends JFrame {
 	private ArrayList<Code> codes = new ArrayList<Code>();
 	private boolean dependency;
 	private String display;
-
-	/*public void setValue (int index, String value)
-	{
-		this.registers[index] = value;
-		this.registers.get(index).s
-	}*/
 
 	/**
 	 * Launch the application.
@@ -77,6 +71,7 @@ public class main extends JFrame {
 		});
 	}
 	
+	// NOTE: Initializes all registers to 0
 	public void initializeRegisters()
 	{
 		for (int x = 0; x < 32; x++)
@@ -88,12 +83,14 @@ public class main extends JFrame {
 			//this.registers[x] = "0000000000000000";
 	}
 	
+	// NOTE: Used for error checking; Yung maling in-initialize na register, binabalik sa 0
 	public void initializeRegister(int index)
 	{
 		this.registers.get(index).setValue("0000000000000000");
 		//this.registers[index] = "0000000000000000";
 	}
 	
+	// NOTE: Converts to binary
 	public String convertToBinary(int num)
 	{
 		String binary;
@@ -101,6 +98,7 @@ public class main extends JFrame {
 		return binary = Integer.toBinaryString(num); 
 	}
 	
+	// NOTE: Converts to hex
 	public String convertToHex(String num)
 	{
 		String hex;
@@ -108,6 +106,7 @@ public class main extends JFrame {
 		return hex = (Integer.toHexString(Integer.parseInt(num, 2))).toUpperCase();
 	}
 	
+	// NOTE: Initializes all memory addresses to 0
 	public void initializeMemory()
 	{
 		System.out.println("ENTERED");
@@ -118,30 +117,29 @@ public class main extends JFrame {
 			this.data.add(new Memory());
 			this.data.get(a).setAddressHex(value);
 			this.data.get(a).setValue("0000000000000000");
-			//System.out.println(this.data.get(a).getAddressHex() + " " + this.data.get(a).getValue());
 			value++;
-			//System.out.println(value);
 		}
 	}
 	
+	// NOTE: Used for error checking; Yung maling in-initialize na memory address, binabalik sa 0
 	public void initializeData(int index)
 	{
 		this.data.get(index).setValue("0000000000000000");
 	}
 	
-	public void dataHazard(ArrayList<Code> codes)
+	// NOTE: Pipeline without hazards
+	public void pipeline(ArrayList<Code> codes)
 	{
-		int cols = codes.size() + 4;
-		cycles.clear();
-		//dependency = false;
-		System.out.println("Size is: " + codes.size());
-		for (int x = 0; x < 50; x++)
+		int cols = codes.size() + 4;					// Number of cycles
+		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
+		System.out.println("Size is: " + codes.size()); // NOTE: Pinapakita kung ilang cycles na
+		for (int x = 0; x < 50; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
 		{
 			for (int y = 0; y < 50; y++)
 				table_2.setValueAt("", x, y);
 		}
 		
-		for (int a = 0; a < codes.size(); a++)
+		for (int a = 0; a < codes.size(); a++)			// NOTE: Pini-print yung pipeline map (without hazards)
 		{
 			if (a == 0 || dependency == false)
 			{
@@ -150,11 +148,10 @@ public class main extends JFrame {
 				table_2.setValueAt("EX", a, a+2);
 				table_2.setValueAt("MEM", a, a+3);
 				table_2.setValueAt("WB", a, a+4);
-				//System.out.println(codes.get(a).getInst());
 			}
 		}
 		
-		for (int c = 0; c < cols; c++)
+		for (int c = 0; c < cols; c++)					// NOTE: Gumagawa ng array of cycles
 			cycles.add(new Cycle());
 		
 		System.out.println("Num of cycles: " + cols);
@@ -419,14 +416,6 @@ public class main extends JFrame {
 			
 			
 		}
-		
-		/*for (int x = 0; x < cols; x++)
-		{
-			for (int y = 0; y < codes.size(); y++)
-			{
-				cycles.get(x)
-			}
-		}*/
 	}
 
 	/**
@@ -729,7 +718,7 @@ public class main extends JFrame {
 				textArea.append(display);*/
 				//code = txtrCode.getText().split("\\n");
 				//opcode = txtrOpcode.getText().split("\\n");
-				dataHazard(codes);
+				pipeline(codes);
 				
 				for (int x = 0; x < cycles.size(); x++)
 				{
