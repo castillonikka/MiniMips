@@ -139,7 +139,8 @@ public class main extends JFrame {
 				table_2.setValueAt("", x, y);
 		}
 		
-		for (int a = 0; a < codes.size(); a++)			// NOTE: Pini-print yung pipeline map (without hazards)
+		// NOTE: Pini-print yung pipeline map (without hazards)
+		for (int a = 0; a < codes.size(); a++)			
 		{
 			if (a == 0 || dependency == false)
 			{
@@ -151,7 +152,8 @@ public class main extends JFrame {
 			}
 		}
 		
-		for (int c = 0; c < cols; c++)					// NOTE: Gumagawa ng array of cycles
+		// NOTE: Gumagawa ng array of cycles
+		for (int c = 0; c < cols; c++)
 			cycles.add(new Cycle());
 		
 		System.out.println("Num of cycles: " + cols);
@@ -160,7 +162,8 @@ public class main extends JFrame {
 		{
 			for (int y = 0; y < codes.size(); y++)
 			{
-				String reg = table_2.getValueAt(y, x).toString();		// NOTE: Pipeline register (kung IF, ID, etc)
+				// NOTE: Pipeline register (kung IF, ID, etc)
+				String reg = table_2.getValueAt(y, x).toString();		
 				switch(reg)
 				{
 					// NOTE: Ito yung mga gagawin pag IF na 
@@ -256,111 +259,181 @@ public class main extends JFrame {
 						cycles.get(x).setID_EX_NPC(cycles.get(x-1).getIF_ID_NPC());
 						break;
 						
+					// NOTE: Ito yung mga gagawin pag EX na 
 					case "EX":
 						switch(codes.get(y).getInst().toUpperCase())
 						{
 							case "DADDU":
-								int regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								int regB = Integer.parseInt(cycles.get(x-1).getID_EX_B(), 16);
-								int ans = regA + regB;
-								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
+								// NOTE: Converts ID/EX.A to int
+								BigInteger regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								BigInteger regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: A + B
+								BigInteger ans = regA.add(regB);
+								// Converts answer to hex -> stores answer in EX/MEM.ALU
+								cycles.get(x).setEX_MEM_ALU(ans.toString(16));
+								// NOTE: Zero extend if needed
 								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 								{
 									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
 								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX/MEM.Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 								
 							case "DADDIU":
+								// NOTE: Converts ID/EX.A to big integer
 								BigInteger regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
 								System.out.println("reg A: " + regA2);
+								// NOTE: Converts ID/EX.Imm to big integer
 								BigInteger tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
 								System.out.println("tempImm: " + tempImm);
+								// NOTE: Answer gets A + Imm
 								BigInteger ans2 = regA2.add(tempImm);
 								System.out.println("ans: "+ ans2);
-								cycles.get(x).setEX_MEM_ALU(tempImm.toString(16));
+								// NOTE: Converts answer to hex -> ALU gets answer
+								cycles.get(x).setEX_MEM_ALU(ans2.toString(16));
+								// NOTE: Zero extend if needed
 								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 								{
 									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
 								}
+								// NOTE: Truncates leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 								
 							case "SLT":
-								regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								regB = Integer.parseInt(cycles.get(x-1).getID_EX_B(), 16);
-								if (regA < regB)
-									ans = 1;
-								else ans = 0;
-								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to in
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: Answer is 1 if A < B
+								int answer = 0;
+								if (regA.compareTo(regB) == -1)
+									answer = 1;
+								// NOTE: Converted ans to hex -> EX/MEM.ALU gets ans
+								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(answer));
+								// NOTE: Zero extend if needed
 								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 								{
 									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
 								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX/MEM.Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 								
 							case "SELEQZ":
-								regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								regB = Integer.parseInt(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: Converted the register number to int
 								int num = Integer.parseInt(codes.get(y).getRs(), 2);
-								if (regB == 0)
-									ans = Integer.parseInt(registers.get(num).getValue(), 16);
-								else ans = 0;
-								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
+								// NOTE: If ID/EX.B == 0, answer gets RS
+								BigInteger zero = new BigInteger("0");
+								ans = new BigInteger("0");
+								if (regB.compareTo(zero) == 0)
+									ans = new BigInteger(registers.get(num).getValue(), 16);
+								// NOTE: Converts answer to hex -> EX/MEM.ALU gets answer
+								cycles.get(x).setEX_MEM_ALU(ans.toString(16));
+								// NOTE: Zero extend if needed
 								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 								{
 									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
 								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX.MEM/Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 							
 							case "DMULU":
 							case "DMUHU":
-								regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								regB = Integer.parseInt(cycles.get(x-1).getID_EX_B(), 16);
-								ans = regA * regB;
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: answer gets A * B
+								ans = regA.multiply(regB);
+								// NOTE: Converts answer to hex
+								String ansHex = ans.toString(16);
+								System.out.println("Ans in hex: " + ansHex + " -- " + ansHex.length());
+								// NOTE: Truncate leading digits if answer is more than 16 bits OR zero extend if less than 16 bits
+								if (ansHex.length() > 16)
+									ansHex = ansHex.substring(Math.max(ansHex.length() - 16, 0));
+								else ansHex = String.format("%16s", ansHex).replace(' ', '0');
 								if (codes.get(y).getInst().toUpperCase().equals("DMULU"))
 								{
-									cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
-									while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+									// NOTE: EX/MEM.ALU gets ansHex (LO)
+									cycles.get(x).setEX_MEM_ALU(ansHex);
+									/*while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 									{
-										cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
-									}
+										cycles.get(x).setEX_MEM_ALU(Character.toString(sign) + cycles.get(x).getEX_MEM_ALU());
+									}*/
 								}
+								// NOTE: if DMUHU
 								else
 								{
-									cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
+									cycles.get(x).setEX_MEM_ALU(ansHex);
+									// NOTE: Zero extend if ALU is less than 32 digits
 									while (cycles.get(x).getEX_MEM_ALU().length() < 32)
 									{
-										cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
+										cycles.get(x).setEX_MEM_ALU(ansHex.charAt(0) + cycles.get(x).getEX_MEM_ALU());
 									}
+									// NOTE: EX/MEM.ALU gets upper 16 bits of ansHex (HI)
 									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(0, 16));
 								}
+								
+								// NOTE: EX/MEM.Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 								
 							case "LD":
 							case "SD":
+								// NOTE: Converts ID/EX.A to big integer
 								regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
 								System.out.println("reg A: " + regA2);
+								// NOTE: Converts ID/EX.Imm to big integer
 								tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
 								System.out.println("tempImm: " + tempImm);
+								// NOTE: answer gets A + Imm 
 								BigInteger ans2A = regA2.add(tempImm);
 								System.out.println("ans: "+ ans2A);
+								// NOTE: Converts answer to hex -> EX/MEM.ALU gets answer
 								cycles.get(x).setEX_MEM_ALU(ans2A.toString(16));
 								System.out.println(tempImm.toString(16));
+								// NOTE: Zero extend if needed
 								cycles.get(x).setEX_MEM_ALU(String.format("%16s", cycles.get(x).getEX_MEM_ALU()).replace(' ', '0'));
 								System.out.println(cycles.get(x).getEX_MEM_ALU());
+								
+								// NOTE: EX/MEM.B = ID/EX.B
 								cycles.get(x).setEX_MEM_B(cycles.get(x-1).getID_EX_B());
+								
+								// NOTE: EX/MEM.Cond = 0
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
 						}
 						
+						// NOTE: EX/MEM.IR = ID/EX.IR
 						cycles.get(x).setEX_MEM_IR(cycles.get(x-1).getID_EX_IR());
 						
 						break;
 						
+					// NOTE: Ito yung mga gagawin pag MEM na 
 					case "MEM":
 						switch(codes.get(y).getInst().toUpperCase())
 						{
@@ -370,39 +443,53 @@ public class main extends JFrame {
 							case "SELEQZ":
 							case "DMULU":
 							case "DMUHU":
+								// NOTE: MEM/WB.ALU = EX/MEM.ALU
 								cycles.get(x).setMEM_ALUoutput(cycles.get(x-1).getEX_MEM_ALU());
 								break;
 								
 							case "LD":
+								// NOTE: Gets the memory address
 								String address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
 								System.out.println(address);
 								int a = 0;
+								// NOTE: Looks for the index of memory address from ArrayList data
 								for (a = 0; a < data.size(); a++)
 								{
 									if (data.get(a).getAddressHex().equals(address))
 										break;
 								}
 								System.out.println("Value: " + data.get(a).getValue());
+								
+								// NOTE: MEM/WB.LMD gets value of memory address
 								cycles.get(x).setMEM_WB_LMD(data.get(a).getValue());
 								break;
 								
 							case "SD":
+								// NOTE: Gets the memory address
 								address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
 								/*System.out.println("ADDRESS " + address);
 								System.out.println("INDEX OF " + data.indexOf(address));*/
+								// NOTE: Looks for the index of memory address from ArrayList data
 								for (a = 0; a < data.size(); a++)
 								{
 									if (data.get(a).getAddressHex().equals(address))
 										break;
 								}
+								
+								// NOTE: Sets value of memory address to EX/MEM.B
 								data.get(a).setValue(cycles.get(x-1).getEX_MEM_B());
+								// NOTE: Updates memory table
 								table_1.getModel().setValueAt(cycles.get(x-1).getEX_MEM_B(), a, 1);
+								// NOTE: Assigns display message
 								cycles.get(x).setWbDisplay("Memory " + address + " = " + cycles.get(x).getEX_MEM_B());
 								break;
 						}
+						
+						// NOTE: MEM/WB.IR = EX/MEM.IR
 						cycles.get(x).setMEM_WB_IR(cycles.get(x-1).getEX_MEM_IR());
 						break;
 						
+					// NOTE: Ito yung mga gagawin pag WB na 
 					case "WB":
 						switch(codes.get(y).getInst().toUpperCase())
 						{
@@ -411,24 +498,39 @@ public class main extends JFrame {
 							case "SELEQZ":
 							case "DMULU":
 							case "DMUHU":
+								// NOTE: Gets the register number of the dest 
 								int reg2 = Integer.parseInt(codes.get(y).getRd(), 2);
+								// NOTE: Dest register gets ALU
 								registers.get(reg2).setValue(cycles.get(x-1).getMEM_ALUoutput());
 								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
 								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
 								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
 								break;
 							case "DADDIU":
+								// NOTE: Gets the register number of the dest
 								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
+								// NOTE: Dest register gets ALU
 								registers.get(reg2).setValue(cycles.get(x-1).getMEM_ALUoutput());
 								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
 								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
 								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
 								break;
 							case "LD":
+								// NOTE: Gets the register number of the dest
 								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
+								// NOTE: Dest register gets ALU
 								registers.get(reg2).setValue(cycles.get(x-1).getMEM_WB_LMD());
 								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
 								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
 								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
 								break;
 						}
@@ -473,6 +575,7 @@ public class main extends JFrame {
 		{
 			@Override
  		   public boolean isCellEditable(int row, int column) {
+				// NOTE: First column of memory table is non-editable
  		       if (column == 0)
  		    	   return false;
  		       else return true;
@@ -496,21 +599,21 @@ public class main extends JFrame {
 		
 		this.initializeRegisters();
 		this.initializeMemory();
+		// NOTE: Adds ArrayList data to the table
 		for (int b = 0; b < 8192; b++)
 		{
 			model.addRow(new Object[]{data.get(b).getAddressHex(), data.get(b).getValue()});
 		}
 		
+		// NOTE: For initializing values to registers
 		btnInitializeValues.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				error = false;
-				//registers[0] = "0000000000000000";
 				registers.get(0).setValue("0000000000000000");
 				table.getModel().setValueAt(registers.get(0).getValue(), 0, 1);
 				for (int a = 1; a < 32; a++)
 				{
-					//registers[a] = table.getModel().getValueAt(a, 1).toString();
-					//if (registers[a].length() != 16)
+					// NOTE: Checks if input is 16-bits long
 					if (table.getModel().getValueAt(a, 1).toString().length() != 16)
 					{
 						error = true;
@@ -518,6 +621,7 @@ public class main extends JFrame {
 					}
 					else
 					{
+						// NOTE: Checks if all characters from the input are hex
 						for (int b = 0; b < 16; b++)
 						{
 							if (table.getModel().getValueAt(a, 1).toString().charAt(b) != '0' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '1' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '2' && table.getModel().getValueAt(a, 1).toString().charAt(b) != '3' && 
@@ -541,8 +645,10 @@ public class main extends JFrame {
 					}
 					else
 					{
+						// NOTE: Updates values and table if error = 0
 						registers.get(a).setValue(table.getModel().getValueAt(a, 1).toString());
 						table.getModel().setValueAt(registers.get(a).getValue(), a, 1);
+						System.out.println("Initialization of register values was successful!");
 					}
 				}
 				
@@ -585,48 +691,63 @@ public class main extends JFrame {
 			public void actionPerformed(ActionEvent arg0) {
 				try
 				{
+					// NOTE: Deletes all previous elements in ArrayList codes, parang reset
 					codes.clear();
 					pc = new int[100];
 					pcHex = new String[100];
 					
+					// NOTE: Bawat element ng Array na code, kinukuha per line sa text box
 					txtrCode2.setText(txtrCode.getText());
 					code = txtrCode.getText().split("\\n");
 					txtrOpcode.setText("");
 					
 					for (int a = 0; a < code.length; a++)
 					{
+						// NOTE: Every instruction line is added to ArrayList codes
 						codes.add(new Code());
 						
+						// NOTE: Assignment of PC to instruction line
 						pc[a] = 4 * a;
 						String tempBin = this.convertToBinary(pc[a]);
+						// NOTE: PC in hex
 						pcHex[a] = this.convertToHex(tempBin);
 						
 						System.out.println(code[a] + "       " + pcHex[a]);
+						// NOTE: Gets instruction
 						String instruction = code[a].split(" ")[0];
 						System.out.println(instruction);
 						
+						// NOTE: Assigns PC
 						codes.get(a).setPcHex(pcHex[a]);
 						codes.get(a).setLine(code[a]);
-						codes.get(a).setInst(instruction);
+						//codes.get(a).setInst(instruction);
 						
 						if (instruction.equals("BC") || instruction.equals("bc"))
 						{
+							// NOTE: Gets label of branch
 							String label = code[a].split(" ")[1];
 							System.out.println(label);
+							
+							// NOTE: Assigns label and instruction to code
 							codes.get(a).setLabel(label);
+							codes.get(a).setInst(instruction);
 							for (int b = 0; b < code.length; b++)
 							{
-								// STOPPED HERE!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+								// NOTE: Hinahanap yung label sa lahat ng instructions
 								String lbl = code[b].split(" ")[0];
+								// NOTE: Inalis yung :
 								lbl = lbl.substring(0, lbl.length()-1);
 								System.out.println(lbl);
 								if (lbl.equals(label))
 								{
+									// NOTE: Gets PC of label
 									int target = 4 * b;
 									int pcBranch = pc[a];
 									System.out.println(target + " and " + pcBranch + " and " + code[a]);
+									// NOTE: Opcode!
 									Opcode opc = new Opcode (code[a], pcBranch, target);
 									String outputOpc = opc.firstWord();
+									// NOTE: Assigns opcode
 									codes.get(a).setOpcode(outputOpc);
 									
 									System.out.println("Opcode is: " + outputOpc);
@@ -649,20 +770,27 @@ public class main extends JFrame {
 						}
 						else if (instruction.equals("BEQC") || instruction.equals("beqc"))
 						{
+							// NOTE: Gets label of branch
 							String label = code[a].split(" ")[3];
 							System.out.println(label);
 							for (int b = 0; b < code.length; b++)
 							{
+								// NOTE: Hinahanap yung label sa lahat ng instructions
 								String lbl = code[b].split(" ")[0];
+								// NOTE: Inalis yung :
 								lbl = lbl.substring(0, lbl.length()-1);
 								System.out.println(lbl);
 								if (lbl.equals(label))
 								{
+									codes.get(a).setInst(instruction);
+									// NOTE: Gets PC of label
 									int target = 4 * b;
 									int pcBranch = pc[a];
 									System.out.println(target + " and " + pcBranch + " and " + code[a]);
+									// NOTE: Opcode!
 									Opcode opc = new Opcode (code[a], pcBranch, target);
 									String outputOpc = opc.firstWord();
+									// NOTE: Assigns opcode
 									codes.get(a).setOpcode(outputOpc);
 									
 									System.out.println("Opcode is: " + outputOpc);
@@ -685,8 +813,12 @@ public class main extends JFrame {
 						}
 						else
 						{
+							// NOTE: Opcode!
 							Opcode opc = new Opcode(code[a]);
 							String outputOpc = opc.firstWord();
+							
+							// NOTE: Assigns instruction and opcode
+							codes.get(a).setInst(instruction);
 							codes.get(a).setOpcode(outputOpc);
 							
 							System.out.println("Opcode is: " + outputOpc);
@@ -697,6 +829,7 @@ public class main extends JFrame {
 							}
 							else 
 							{
+								// NOTE: Assigns all the other attributes
 								txtrOpcode.setText(txtrOpcode.getText() + outputOpc + "\n");
 								codes.get(a).setImm(opc.getImm());
 								codes.get(a).setRd(opc.getRd());
@@ -706,9 +839,6 @@ public class main extends JFrame {
 							}
 						}
 					}
-					/*System.out.println("OPCODES ARE:");
-					for (int x = 0; x < code.length; x++)
-						System.out.println("Line " + (x+1) + " -- " + codes.get(x).getOpcode());*/
 					
 				} catch (StringIndexOutOfBoundsException e)
 				{
@@ -734,23 +864,18 @@ public class main extends JFrame {
 		
 		btnFullExecution.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				/*Cycle cycles.get(x) = new Cycle();
-				String display = "CYCLE " + cycles.get(x).getNum() + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n\n~~~~~~~~~~~~~";
-				textArea.append(display);*/
-				//code = txtrCode.getText().split("\\n");
-				//opcode = txtrOpcode.getText().split("\\n");
 				pipeline(codes);
 				
+				// NOTE: Para sa pag-display ng pipeline registers
 				for (int x = 0; x < cycles.size(); x++)
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.append(display);
 				}
-				
 			}
 		});
 		
-		
+		// NOTE: Register table
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
 				{"R0 =", this.registers.get(0).getValue()},
@@ -827,13 +952,14 @@ public class main extends JFrame {
 		txtrOpcode.setEditable(false);
 		
 		JButton btnInitializeData = new JButton("Initialize Data");
+		
+		// NOTE: Initialization of memory data
 		btnInitializeData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				memError = false;
 				for (int a = 1; a < 8192; a++)
 				{
-					//registers[a] = table_1.getModel().getValueAt(a, 1).toString();
-					//if (registers[a].length() != 16)
+					// NOTE: If memory data is not 16 bits long
 					if (table_1.getModel().getValueAt(a, 1).toString().length() != 16)
 					{
 						memError = true;
@@ -841,6 +967,7 @@ public class main extends JFrame {
 					}
 					else
 					{
+						// NOTE: Checks if all characters from input are hex
 						for (int b = 0; b < 16; b++)
 						{
 							if (table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '0' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '1' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '2' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '3' && 
@@ -856,7 +983,7 @@ public class main extends JFrame {
 					}
 					if (memError)
 					{
-						// STOPPED HERE!!!!!!!!!!!!!!!!!!!!!!! pt2
+						// NOTE: Binabalik sa 0 yung data pag mali input 
 						initializeData(a);
 						System.out.println("Initialized Memory Address" + a + " to " + data.get(a).getValue());
 						JOptionPane.showMessageDialog(new JFrame(), "Error!!");
@@ -865,15 +992,11 @@ public class main extends JFrame {
 					}
 					else
 					{
+						// NOTE: Updates values and table
 						data.get(a).setValue(table_1.getModel().getValueAt(a, 1).toString());
 						table_1.getModel().setValueAt(data.get(a).getValue(), a, 1);
 					}
 				}
-				
-				/*for (int c = 0; c < 8192; c++)
-				{
-					System.out.println("Memory" + c + ": " + data.get(c).getValue());
-				}*/
 			}
 		});
 		btnInitializeData.setBounds(377, 420, 137, 23);
