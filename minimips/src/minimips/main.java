@@ -160,13 +160,18 @@ public class main extends JFrame {
 		{
 			for (int y = 0; y < codes.size(); y++)
 			{
-				String reg = table_2.getValueAt(y, x).toString();
+				String reg = table_2.getValueAt(y, x).toString();		// NOTE: Pipeline register (kung IF, ID, etc)
 				switch(reg)
 				{
-					case "IF":
+					// NOTE: Ito yung mga gagawin pag IF na 
+					case "IF":	
 						System.out.println("LINDT");
+						
+						// NOTE: IR gets opcode of instruction
 						cycles.get(x).setIF_ID_IR(codes.get(y).getOpcode());
 						System.out.println("OPCODE!!! " + codes.get(y).getOpcode());
+						
+						// NOTE: temp is PC + 4
 						int temp = Integer.parseInt(codes.get(y).getPcHex(), 16) + 4;
 						
 						cycles.get(x).setIF_ID_NPC(Integer.toHexString(temp));
@@ -174,21 +179,28 @@ public class main extends JFrame {
 						cycles.get(x).setPC(codes.get(y).getPcHex());
 						break;
 						
+					// NOTE: Ito yung mga gagawin pag ID na 
 					case "ID":
 						System.out.println("HERSHEYS");
+						
+						// NOTE: Kinukuha laman ni RS (aka register A)
 						int temp2 = Integer.parseInt(codes.get(y).getRs(), 2);
 						System.out.println(temp2);
 						String laman = registers.get(temp2).getValue();
 						cycles.get(x).setID_EX_A(laman);
 						System.out.println(cycles.get(x).getID_EX_A());
 						
+						// NOTE: Kinukuha laman ni RT (aka register B)
 						temp2 = Integer.parseInt(codes.get(y).getRt(), 2);
 						System.out.println(temp2);
 						laman = registers.get(temp2).getValue();
 						cycles.get(x).setID_EX_B(laman);
 						System.out.println(cycles.get(x).getID_EX_B());
 						
+						// NOTE: Kinukuha yung immediate value sa opcode
 						String hexImm2 = codes.get(y).getOpcode().substring(4);
+						
+						// NOTE: Converts first digit of immediate to 4-bit binary
 						char first = hexImm2.charAt(0);
 						String first2 = Character.toString(first);
 						System.out.println("IMM 1: " + first2);
@@ -196,6 +208,7 @@ public class main extends JFrame {
 						String firstBin = String.format("%4s", Integer.toBinaryString(firstDigit)).replace(' ', '0');
 						System.out.println("BIN 1  " + firstBin);
 						
+						// NOTE: Converts second digit of immediate to 4-bit binary
 						char second = hexImm2.charAt(1);
 						String second2 = Character.toString(second);
 						System.out.println("IMM 2: " + second2);
@@ -203,6 +216,7 @@ public class main extends JFrame {
 						String secondBin = String.format("%4s", Integer.toBinaryString(secondDigit)).replace(' ', '0');
 						System.out.println("BIN 2  " + secondBin);
 						
+						// NOTE: Converts third digit of immediate to 4-bit binary
 						char third = hexImm2.charAt(2);
 						String third2 = Character.toString(third);
 						System.out.println("IMM 3: " + third2);
@@ -210,19 +224,24 @@ public class main extends JFrame {
 						String thirdBin = String.format("%4s", Integer.toBinaryString(thirdDigit)).replace(' ', '0');
 						System.out.println("BIN 3  " + thirdBin);
 						
+						// NOTE: Converts fourth digit of immediate to 4-bit binary
 						char fourth = hexImm2.charAt(3);
 						String fourth2 = Character.toString(fourth);
 						System.out.println("IMM 4: " + fourth2);
 						int fourthDigit = Integer.parseInt(fourth2, 16);
 						String fourthBin = String.format("%4s", Integer.toBinaryString(fourthDigit)).replace(' ', '0');
 						System.out.println("BIN 4  " + fourthBin);
-					
+						
+						// NOTE: Immediate in binary
 						String binImm = firstBin + secondBin + thirdBin + fourthBin;
 						
+						// NOTE: Sign extend immediate
 						while (binImm.length() < 64)
 						{
 							binImm = binImm.charAt(0) + binImm;
 						}
+						
+						// NOTE: Converts binary immediate to hex
 						BigInteger big = new BigInteger (binImm, 2);
 						hexImm2 = big.toString(16);
 						//hexImm2 = "000000000000" + hexImm2;
@@ -230,8 +249,10 @@ public class main extends JFrame {
 						cycles.get(x).setID_EX_IMM(hexImm2);
 						System.out.println("Immediate is " + cycles.get(x).getID_EX_IMM());
 						
+						// NOTE: Gets previous IR
 						cycles.get(x).setID_EX_IR(cycles.get(x-1).getIF_ID_IR());
 						
+						// NOTE: Gets previous NPC
 						cycles.get(x).setID_EX_NPC(cycles.get(x-1).getIF_ID_NPC());
 						break;
 						
