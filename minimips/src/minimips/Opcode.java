@@ -55,7 +55,6 @@ public class Opcode {
 	
 	
 	// Getters and Setters
-	
 	public String getRs() {
 		return rs;
 	}
@@ -111,22 +110,21 @@ public class Opcode {
 		return pcHex;
 	}
 
-
 	public void setPcHex(String pcHex) {
 		this.pcHex = pcHex;
 	}
 
-
 	public int getPc() {
 		return pc;
 	}
-
 
 	public void setPc(int pc) {
 		this.pc = pc;
 	}
 	
 	// Methods
+	
+	// NOTE: Pang-convert to binary
 	public String convertToBinary(int num)
 	{
 		String binary;
@@ -134,6 +132,7 @@ public class Opcode {
 		return binary = Integer.toBinaryString(num); 
 	}
 	
+	// NOTE: Pang-convert to hex
 	public String convertToHex(String num)
 	{
 		String hex;
@@ -141,6 +140,7 @@ public class Opcode {
 		return hex = (Integer.toHexString(Integer.parseInt(num, 2))).toUpperCase();
 	}
 	
+	// NOTE: Pang-dagdag nang leading 0 (for 5 bits)
 	public String concatZero(String register, int num)
 	{
 		String result = "";
@@ -159,6 +159,7 @@ public class Opcode {
 		return result;
 	}
 	
+	// NOTE: Pang-dagdag ng leading 0 (for 4 bits)
 	public String concatZero2(String register, int num)
 	{
 		String imm = "";
@@ -173,6 +174,7 @@ public class Opcode {
 		return imm;
 	}
 	
+	// NOTE: Pang-dagdag ng leading 0
 	public String extend (String num)
 	{
 		String output = "";
@@ -182,11 +184,13 @@ public class Opcode {
 		return output;
 	}
 	
+	// NOTE: Pang-dagdag ng leading 0 sa offset ng BC
 	public String extendBc (String num)
 	{
 		return (("00000000000000000000000000" + num).substring(num.length()));
 	}
 	
+	// NOTE: Pang-dagdag ng leading 0 sa offset ng BEQC
 	public String extendBeqc (String num)
 	{
 		String output = "";
@@ -196,6 +200,7 @@ public class Opcode {
 		return output;
 	}
 	
+	// NOTE: Pang-convert to int
 	public int convertToNum (char a)
 	{
 		int num = 0;
@@ -236,10 +241,12 @@ public class Opcode {
 		return num;
 	}
 	
+	// NOTE: Opcode!
 	public String generateOpcode(String inst)
 	{
 		switch(inst)
 			{
+			// NOTE: if R-Type 
 				case "DADDU":
 				case "daddu":
 				case "DMULU":
@@ -255,13 +262,14 @@ public class Opcode {
 					this.num1 = Character.getNumericValue(this.par1.charAt(1));
 					if (this.num1 == 0)
 					{
+						// NOTE: Bawal maging R0 yung destination
 						this.error = true;
 						this.errorMessage = "Invalid register.";
 						break;
 					}
 					else
 					{
-						// if reg is from 10 to 31
+						// NOTE: if reg is from 10 to 31 (may 2nd digit sa register number) 
 						if (Character.getNumericValue(this.par1.charAt(2)) >= 0 && Character.getNumericValue(this.par1.charAt(2)) <= 9)
 						{
 							System.out.println(Character.getNumericValue(this.par1.charAt(1)));
@@ -289,7 +297,6 @@ public class Opcode {
 							System.out.println("RD is " + rd);
 						}
 					}
-					
 					
 					
 					// SECOND PARAMETER = REG
@@ -388,13 +395,17 @@ public class Opcode {
 							break;
 					}
 					
+					// NOTE: Opcode in binary
 					String opcode = this.opc + " " + this.rs + " " + this.rt + " " + this.rd + " " + this.func1 + " " + this.func2;
 					System.out.println(opcode);
+					
+					// NOTE: Opcode in hex
 					this.opcodeHex = this.convertToHex(this.opc + this.rs + this.rt + this.rd + this.func1 + this.func2);
 					this.opcodeHex = this.extend(this.opcodeHex);
 					
 					break;
 				
+				// NOTE: if I-type 
 				case "BEQC":
 				case "beqc":
 				case "DADDIU":
@@ -405,6 +416,7 @@ public class Opcode {
 					
 					if (this.num1 == 0 && (this.inst.equals("DADDIU") || this.inst.equals("daddiu")))
 					{
+						// NOTE: Bawal maging R0 ang dest
 						this.error = true;
 						this.errorMessage = "Invalid register.";
 						break;
@@ -642,11 +654,7 @@ public class Opcode {
 					
 					// GENERATE OPCODE
 					this.opc = "110010";
-					//this.opcodeHex = this.convertToHex(opc + imm);
 					System.out.println("OPCODE IN BINARY IS " + this.opc + " " + this.imm);
-					//this.opcodeHex = this.extend(this.opcodeHex);
-					/*this.opcodeHex = this.convertToHex(this.opc + this.imm);
-					System.out.println("OPCODE IN HEX IS " + this.opcodeHex);*/
 					String bcOpc = this.opc + this.imm;
 					BigInteger b = new BigInteger (bcOpc, 2);
 					this.opcodeHex = b.toString(16).toUpperCase();
@@ -663,14 +671,13 @@ public class Opcode {
 		return this.opcodeHex;
 	}
 	
+	// NOTE: Where the opcode generation begins
+	// NOTE: Kaya "firstWord" kasi chine-check muna yung first word sa instruction line (kung label or hindi)
 	public String firstWord()
 	{
-		/*this.input = this.sc.nextLine();*/
 		this.word = new Scanner(this.input).useDelimiter(" ");
-		//this.inst = this.word.next().toString();
 		
 		String[] codeLine = this.input.split(" ");
-		//System.out.println(codeLine[0]);
 		if (codeLine[0].charAt(codeLine[0].length()-1) == ':')
 		{
 			this.label = codeLine[0].substring(0, codeLine[0].length()-1);

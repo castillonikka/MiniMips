@@ -143,13 +143,4 @@ public class Cycle {
 	public void setMEM_ALUoutput(String mEM_ALUoutput) {
 		MEM_ALUoutput = mEM_ALUoutput;
 	}
-	
-	// Methods
-	public void generateCycle()
-	{
-		
-	}
-	
-	
-	
 }
