@@ -26,6 +26,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableModel;
 import javax.swing.JTabbedPane;
 import java.awt.event.ActionListener;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.awt.event.ActionEvent;
 import javax.swing.JList;
@@ -190,18 +191,47 @@ public class main extends JFrame {
 						cycles.get(x).setID_EX_B(laman);
 						System.out.println(cycles.get(x).getID_EX_B());
 						
-						/*int immediate = Integer.parseInt(codes.get(y).getOpcode(), 16);
-						System.out.println(immediate);
-						String binImm = Integer.toBinaryString(immediate);
-						binImm = binImm.substring(binImm.length()-16);
-						System.out.println(binImm);
-						int hexImm = Integer.parseInt(binImm, 2);
-						System.out.println(hexImm);*/
 						String hexImm2 = codes.get(y).getOpcode().substring(4);
-						hexImm2 = "000000000000" + hexImm2;
+						char first = hexImm2.charAt(0);
+						String first2 = Character.toString(first);
+						System.out.println("IMM 1: " + first2);
+						int firstDigit = Integer.parseInt(first2, 16);
+						String firstBin = String.format("%4s", Integer.toBinaryString(firstDigit)).replace(' ', '0');
+						System.out.println("BIN 1  " + firstBin);
+						
+						char second = hexImm2.charAt(1);
+						String second2 = Character.toString(second);
+						System.out.println("IMM 2: " + second2);
+						int secondDigit = Integer.parseInt(second2, 16);
+						String secondBin = String.format("%4s", Integer.toBinaryString(secondDigit)).replace(' ', '0');
+						System.out.println("BIN 2  " + secondBin);
+						
+						char third = hexImm2.charAt(2);
+						String third2 = Character.toString(third);
+						System.out.println("IMM 3: " + third2);
+						int thirdDigit = Integer.parseInt(third2, 16);
+						String thirdBin = String.format("%4s", Integer.toBinaryString(thirdDigit)).replace(' ', '0');
+						System.out.println("BIN 3  " + thirdBin);
+						
+						char fourth = hexImm2.charAt(3);
+						String fourth2 = Character.toString(fourth);
+						System.out.println("IMM 4: " + fourth2);
+						int fourthDigit = Integer.parseInt(fourth2, 16);
+						String fourthBin = String.format("%4s", Integer.toBinaryString(fourthDigit)).replace(' ', '0');
+						System.out.println("BIN 4  " + fourthBin);
+					
+						String binImm = firstBin + secondBin + thirdBin + fourthBin;
+						
+						while (binImm.length() < 64)
+						{
+							binImm = binImm.charAt(0) + binImm;
+						}
+						BigInteger big = new BigInteger (binImm, 2);
+						hexImm2 = big.toString(16);
+						//hexImm2 = "000000000000" + hexImm2;
 						System.out.println(hexImm2);
 						cycles.get(x).setID_EX_IMM(hexImm2);
-						System.out.println(cycles.get(x).getID_EX_IMM());
+						System.out.println("Immediate is " + cycles.get(x).getID_EX_IMM());
 						
 						cycles.get(x).setID_EX_IR(cycles.get(x-1).getIF_ID_IR());
 						
@@ -224,10 +254,13 @@ public class main extends JFrame {
 								break;
 								
 							case "DADDIU":
-								regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								int tempImm = Integer.parseInt(cycles.get(x-1).getID_EX_IMM(), 16);
-								ans = regA + tempImm;
-								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
+								BigInteger regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								System.out.println("reg A: " + regA2);
+								BigInteger tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
+								System.out.println("tempImm: " + tempImm);
+								BigInteger ans2 = regA2.add(tempImm);
+								System.out.println("ans: "+ ans2);
+								cycles.get(x).setEX_MEM_ALU(tempImm.toString(16));
 								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 								{
 									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
@@ -291,18 +324,16 @@ public class main extends JFrame {
 								
 							case "LD":
 							case "SD":
-								System.out.println("KITKAT");
-								regA = Integer.parseInt(cycles.get(x-1).getID_EX_A(), 16);
-								tempImm = Integer.parseInt(cycles.get(x-1).getID_EX_IMM(), 16);
-								System.out.println(regA + " + " + tempImm);
-								ans = regA + tempImm;
-								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(ans));
-								System.out.println(Integer.toHexString(ans));
-								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
-								{
-									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
-								}
-								
+								regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								System.out.println("reg A: " + regA2);
+								tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
+								System.out.println("tempImm: " + tempImm);
+								BigInteger ans2A = regA2.add(tempImm);
+								System.out.println("ans: "+ ans2A);
+								cycles.get(x).setEX_MEM_ALU(ans2A.toString(16));
+								System.out.println(tempImm.toString(16));
+								cycles.get(x).setEX_MEM_ALU(String.format("%16s", cycles.get(x).getEX_MEM_ALU()).replace(' ', '0'));
+								System.out.println(cycles.get(x).getEX_MEM_ALU());
 								cycles.get(x).setEX_MEM_B(cycles.get(x-1).getID_EX_B());
 								cycles.get(x).setEX_MEM_COND("0");
 								break;
@@ -326,12 +357,14 @@ public class main extends JFrame {
 								
 							case "LD":
 								String address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
+								System.out.println(address);
 								int a = 0;
 								for (a = 0; a < data.size(); a++)
 								{
 									if (data.get(a).getAddressHex().equals(address))
 										break;
 								}
+								System.out.println("Value: " + data.get(a).getValue());
 								cycles.get(x).setMEM_WB_LMD(data.get(a).getValue());
 								break;
 								
