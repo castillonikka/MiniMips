@@ -2,6 +2,7 @@ package minimips;
 
 public class Code {
 
+	// Attributes
 	private String pcHex;
 	private String opcode;
 	private String rs;
@@ -83,7 +84,6 @@ public class Code {
 	}
 	
 	// Methods
-	
 	public void printAttributes()
 	{
 		System.out.println("DETAILS ARE:");

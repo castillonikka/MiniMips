@@ -54,6 +54,8 @@ public class main extends JFrame {
 	private ArrayList<Code> codes = new ArrayList<Code>();
 	private boolean dependency;
 	private String display;
+	private boolean stall;
+	private int tempCol;
 
 	/**
 	 * Launch the application.
@@ -128,7 +130,7 @@ public class main extends JFrame {
 	}
 	
 	// NOTE: Pipeline without hazards
-	public void pipeline(ArrayList<Code> codes)
+	/*public void pipeline(ArrayList<Code> codes)
 	{
 		int cols = codes.size() + 4;					// Number of cycles
 		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
@@ -380,10 +382,10 @@ public class main extends JFrame {
 								{
 									// NOTE: EX/MEM.ALU gets ansHex (LO)
 									cycles.get(x).setEX_MEM_ALU(ansHex);
-									/*while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+									while (cycles.get(x).getEX_MEM_ALU().length() < 16)
 									{
 										cycles.get(x).setEX_MEM_ALU(Character.toString(sign) + cycles.get(x).getEX_MEM_ALU());
-									}*/
+									}
 								}
 								// NOTE: if DMUHU
 								else
@@ -467,8 +469,8 @@ public class main extends JFrame {
 							case "SD":
 								// NOTE: Gets the memory address
 								address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
-								/*System.out.println("ADDRESS " + address);
-								System.out.println("INDEX OF " + data.indexOf(address));*/
+								System.out.println("ADDRESS " + address);
+								System.out.println("INDEX OF " + data.indexOf(address));
 								// NOTE: Looks for the index of memory address from ArrayList data
 								for (a = 0; a < data.size(); a++)
 								{
@@ -540,7 +542,126 @@ public class main extends JFrame {
 			
 		}
 	}
-
+*/
+	
+	
+	public void pipeline(ArrayList<Code> codes)
+	{
+		/*table_2.setValueAt("IF", 0, 0);
+		table_2.setValueAt("ID", 0, 1);
+		table_2.setValueAt("EX", 0, 2);
+		table_2.setValueAt("MEM", 0, 3);
+		table_2.setValueAt("WB", 0, 4);
+		System.out.println("PRINTED FIRST INST");*/
+		
+		dependency = false;
+		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
+		System.out.println("Size is: " + codes.size()); // NOTE: Pinapakita kung ilang cycles na
+		for (int x = 0; x < 50; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
+		{
+			for (int y = 0; y < 50; y++)
+				table_2.setValueAt("", x, y);
+		}
+		
+		for (int a = 0; a < codes.size(); a++)
+		{
+			if (a == 0)
+			{
+				table_2.setValueAt("IF", a, a+0);
+				table_2.setValueAt("ID", a, a+1);
+				table_2.setValueAt("EX", a, a+2);
+				table_2.setValueAt("MEM", a, a+3);
+				table_2.setValueAt("WB", a, a+4);
+				System.out.println("PRINTED FIRST INST");
+			}
+			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == false)
+			{
+				table_2.setValueAt("IF", a, a+0);
+				stall = false;
+				System.out.println("No stalls before me!");
+			}
+			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == true)
+			{
+				System.out.println("There is a stall before me!");
+				stall = true;
+				tempCol = a+0;
+				while (table_2.getValueAt(a-1, tempCol).toString().equals("*"))
+				{
+					table_2.setValueAt("*", a, tempCol);
+					tempCol++;
+				}
+				System.out.println("Printed stalls!");
+				table_2.setValueAt("IF", a, tempCol);
+				System.out.println("Fetch!");
+			}
+			
+			switch(codes.get(a).getInst().toUpperCase())
+			{
+				case "DADDU":
+				case "SLT":
+				case "SELEQZ":
+				case "DMULU":
+				case "DMUHU":
+					for (int b = 0; b < codes.size(); b++)
+					{
+						if (codes.get(a).getRs().equals(codes.get(b).getRd()) && (codes.get(b).getInst().toUpperCase().equals("DADDU") || codes.get(b).getInst().toUpperCase().equals("SLT")
+							|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") || codes.get(b).getInst().toUpperCase().equals("DMULU") || codes.get(b).getInst().toUpperCase().equals ("DMUHU")))
+						{
+							System.out.println("I am dependent! And I am instruction #" + a);
+							dependency = true;
+							for (int c = 0; c < 50; c++)
+							{
+								int write;
+								int numStalls = 0;
+								int d = 0;
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									numStalls = c - a;
+									d = numStalls;
+									System.out.println("Number of stalls should be " + d);
+									/*for (int x = a; x <= c; x++)
+									{
+										table_2.setValueAt("*", a, x);
+									}*/
+									while (numStalls != 0)
+									{
+										table_2.setValueAt("*", a, (c - numStalls + 1));
+										numStalls--;
+									}
+									table_2.setValueAt("ID", a, write+1);
+									table_2.setValueAt("EX", a, write+2);
+									table_2.setValueAt("MEM", a, write+3);
+									table_2.setValueAt("WB", a, write+4);
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, a+1);
+							table_2.setValueAt("EX", a, a+2);
+							table_2.setValueAt("MEM", a, a+3);
+							table_2.setValueAt("WB", a, a+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					
+			}
+		}
+	}
+	
 	/**
 	 * Create the frame.
 	 */
@@ -729,7 +850,6 @@ public class main extends JFrame {
 							System.out.println(label);
 							
 							// NOTE: Assigns label and instruction to code
-							codes.get(a).setLabel(label);
 							codes.get(a).setInst(instruction);
 							for (int b = 0; b < code.length; b++)
 							{
@@ -818,7 +938,12 @@ public class main extends JFrame {
 							String outputOpc = opc.firstWord();
 							
 							// NOTE: Assigns instruction and opcode
-							codes.get(a).setInst(instruction);
+							if (opc.getLabel() != null)
+							{
+								codes.get(a).setLabel(opc.getLabel());
+								codes.get(a).setInst(opc.getInst());
+							}
+							else codes.get(a).setInst(opc.getInst());
 							codes.get(a).setOpcode(outputOpc);
 							
 							System.out.println("Opcode is: " + outputOpc);
