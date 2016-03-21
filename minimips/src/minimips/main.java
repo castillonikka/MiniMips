@@ -619,8 +619,26 @@ public class main extends JFrame {
 						System.out.println("Entered loop!");
 						System.out.println("Dependency is " + dependency);
 						System.out.println("Stall is " + stall);
-						if ((codes.get(a).getRs().equals(codes.get(b).getRd()) || codes.get(a).getRt().equals(codes.get(b).getRd())) && (codes.get(b).getInst().toUpperCase().equals("DADDU") || codes.get(b).getInst().toUpperCase().equals("SLT")
-							|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") || codes.get(b).getInst().toUpperCase().equals("DMULU") || codes.get(b).getInst().toUpperCase().equals ("DMUHU")))
+						if 
+						(
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							( 
+								(codes.get(a).getRs().equals(codes.get(b).getRt()))
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+						)
 						{
 							System.out.println("I am dependent! And I am instruction #" + a);
 							dependency = true;
@@ -689,7 +707,198 @@ public class main extends JFrame {
 							table_2.setValueAt("WB", a, tempCol+4);
 						}
 					}
-					
+					break;
+				case "LD":
+				case "DADDIU":
+					for (int b = 0; b < codes.size(); b++)
+					{
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						if
+						(
+							(
+								codes.get(a).getRs().equals(codes.get(b).getRt()) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+							||
+							( 
+								(codes.get(a).getRs().equals(codes.get(b).getRd()))
+								&&  
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+						)
+						{
+							System.out.println("I am dependent! And I am instruction #" + a);
+							dependency = true;
+							for (int c = 0; c < 50; c++)
+							{
+								int write, start = a;
+								int numStalls = 0;
+								int d = 0;
+								
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									for (int x = 0; x < 50; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									if (stall == false || (stall == true && dependency == true))
+									{
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										/*for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}*/
+										while (numStalls != 0)
+										{
+											table_2.setValueAt("*", a, (c - numStalls + 1));
+											numStalls--;
+										}
+										table_2.setValueAt("ID", a, write+1);
+										table_2.setValueAt("EX", a, write+2);
+										table_2.setValueAt("MEM", a, write+3);
+										table_2.setValueAt("WB", a, write+4);
+									}
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent! B");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					break;
+				case "SD":
+					for (int b = 0; b < codes.size(); b++)
+					{
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						if
+						(
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRt()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRt())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+						)
+						{
+							System.out.println("I am dependent! And I am instruction #" + a);
+							dependency = true;
+							for (int c = 0; c < 50; c++)
+							{
+								int write, start = a;
+								int numStalls = 0;
+								int d = 0;
+								
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									for (int x = 0; x < 50; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									if (stall == false || (stall == true && dependency == true))
+									{
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										/*for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}*/
+										while (numStalls != 0)
+										{
+											table_2.setValueAt("*", a, (c - numStalls + 1));
+											numStalls--;
+										}
+										table_2.setValueAt("ID", a, write+1);
+										table_2.setValueAt("EX", a, write+2);
+										table_2.setValueAt("MEM", a, write+3);
+										table_2.setValueAt("WB", a, write+4);
+									}
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent! B");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					break;
 			}
 		}
 	}
