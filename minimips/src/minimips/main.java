@@ -55,7 +55,7 @@ public class main extends JFrame {
 	private boolean dependency;
 	private String display;
 	private boolean stall;
-	private int tempCol;
+	private int tempCol, tempA;
 
 	/**
 	 * Launch the application.
@@ -554,7 +554,6 @@ public class main extends JFrame {
 		table_2.setValueAt("WB", 0, 4);
 		System.out.println("PRINTED FIRST INST");*/
 		
-		dependency = false;
 		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
 		System.out.println("Size is: " + codes.size()); // NOTE: Pinapakita kung ilang cycles na
 		for (int x = 0; x < 50; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
@@ -565,6 +564,8 @@ public class main extends JFrame {
 		
 		for (int a = 0; a < codes.size(); a++)
 		{
+			dependency = false;
+			stall = false;
 			if (a == 0)
 			{
 				table_2.setValueAt("IF", a, a+0);
@@ -576,9 +577,15 @@ public class main extends JFrame {
 			}
 			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == false)
 			{
-				table_2.setValueAt("IF", a, a+0);
+				tempA = a;
+				while (table_2.getValueAt(a-1, tempA+0).toString().equals("IF") || table_2.getValueAt(a-1, tempA+0).toString().equals(""))
+				{
+					tempA++;
+					//table_2.setValueAt("IF", a, tempA+1);
+				}
+				table_2.setValueAt("IF", a, tempA);
 				stall = false;
-				System.out.println("No stalls before me!");
+				System.out.println("No stalls before me! TempA is " + tempA);
 			}
 			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == true)
 			{
@@ -591,8 +598,13 @@ public class main extends JFrame {
 					tempCol++;
 				}
 				System.out.println("Printed stalls!");
+				while (table_2.getValueAt(a-1, tempCol).toString().equals("IF") || table_2.getValueAt(a-1, tempCol).toString().equals("") || table_2.getValueAt(a-1, tempCol).toString().equals("*"))
+				{
+					tempCol++;
+					//table_2.setValueAt("IF", a, tempCol);
+				}
 				table_2.setValueAt("IF", a, tempCol);
-				System.out.println("Fetch!");
+				System.out.println("Fetch! TempCol is " + tempCol);
 			}
 			
 			switch(codes.get(a).getInst().toUpperCase())
@@ -604,36 +616,56 @@ public class main extends JFrame {
 				case "DMUHU":
 					for (int b = 0; b < codes.size(); b++)
 					{
-						if (codes.get(a).getRs().equals(codes.get(b).getRd()) && (codes.get(b).getInst().toUpperCase().equals("DADDU") || codes.get(b).getInst().toUpperCase().equals("SLT")
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						if ((codes.get(a).getRs().equals(codes.get(b).getRd()) || codes.get(a).getRt().equals(codes.get(b).getRd())) && (codes.get(b).getInst().toUpperCase().equals("DADDU") || codes.get(b).getInst().toUpperCase().equals("SLT")
 							|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") || codes.get(b).getInst().toUpperCase().equals("DMULU") || codes.get(b).getInst().toUpperCase().equals ("DMUHU")))
 						{
 							System.out.println("I am dependent! And I am instruction #" + a);
 							dependency = true;
 							for (int c = 0; c < 50; c++)
 							{
-								int write;
+								int write, start = a;
 								int numStalls = 0;
 								int d = 0;
+								
 								if (table_2.getValueAt(b, c).toString().equals("WB"))
 								{
+									for (int x = 0; x < 50; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
 									write = c;
 									System.out.println("WB of primary inst is at " + write);
-									numStalls = c - a;
-									d = numStalls;
-									System.out.println("Number of stalls should be " + d);
-									/*for (int x = a; x <= c; x++)
+									if (stall == false || (stall == true && dependency == true))
 									{
-										table_2.setValueAt("*", a, x);
-									}*/
-									while (numStalls != 0)
-									{
-										table_2.setValueAt("*", a, (c - numStalls + 1));
-										numStalls--;
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										/*for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}*/
+										while (numStalls != 0)
+										{
+											table_2.setValueAt("*", a, (c - numStalls + 1));
+											numStalls--;
+										}
+										table_2.setValueAt("ID", a, write+1);
+										table_2.setValueAt("EX", a, write+2);
+										table_2.setValueAt("MEM", a, write+3);
+										table_2.setValueAt("WB", a, write+4);
 									}
-									table_2.setValueAt("ID", a, write+1);
-									table_2.setValueAt("EX", a, write+2);
-									table_2.setValueAt("MEM", a, write+3);
-									table_2.setValueAt("WB", a, write+4);
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
 								}
 								
 								//System.out.println("Printed everything else!");
@@ -643,14 +675,14 @@ public class main extends JFrame {
 						else if (dependency == false && stall == false)
 						{
 							System.out.println("I am not dependent!");
-							table_2.setValueAt("ID", a, a+1);
-							table_2.setValueAt("EX", a, a+2);
-							table_2.setValueAt("MEM", a, a+3);
-							table_2.setValueAt("WB", a, a+4);
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
 						}
 						else if (dependency == false && stall == true)
 						{
-							System.out.println("I am not dependent!");
+							System.out.println("I am not dependent! B");
 							table_2.setValueAt("ID", a, tempCol+1);
 							table_2.setValueAt("EX", a, tempCol+2);
 							table_2.setValueAt("MEM", a, tempCol+3);
@@ -814,6 +846,12 @@ public class main extends JFrame {
 				{
 					// NOTE: Deletes all previous elements in ArrayList codes, parang reset
 					codes.clear();
+					// NOTE: Deletes all previous values in Pipeline Map
+					for (int y = 0; y < 50; y++)
+					{
+						for (int z = 0; z < 50; z++)
+							table_2.setValueAt("", y, z);
+					}
 					pc = new int[100];
 					pcHex = new String[100];
 					
