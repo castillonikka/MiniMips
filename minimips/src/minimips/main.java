@@ -203,6 +203,7 @@ public class main extends JFrame {
 						System.out.println("Entered loop!");
 						System.out.println("Dependency is " + dependency);
 						System.out.println("Stall is " + stall);
+						System.out.println("Current RS is " + codes.get(a).getRs());
 						if 
 						(
 							(
@@ -222,9 +223,28 @@ public class main extends JFrame {
 								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
 								|| codes.get(b).getInst().toUpperCase().equals("LD"))
 							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							( 
+								(codes.get(a).getRt().equals(codes.get(b).getRt()))
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
 						)
 						{
-							System.out.println("I am dependent! And I am instruction #" + a);
+							System.out.println("Dependent on R" + codes.get(b).getRt());
+							System.out.println("I am dependent! And I am instruction #" + a + " depending on instruction #" + b);
 							dependency = true;
 							for (int c = 0; c < 100; c++)
 							{
@@ -407,6 +427,7 @@ public class main extends JFrame {
 					}
 					break;
 				case "SD":
+				case "BEQC":
 					for (int b = 0; b < a; b++)
 					{
 						System.out.println("Entered loop!");
@@ -427,6 +448,25 @@ public class main extends JFrame {
 							||
 							(
 								(codes.get(a).getRs().equals(codes.get(b).getRt()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRt())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRt()) 
 								|| codes.get(a).getRt().equals(codes.get(b).getRt())) 
 								&& 
 								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
