@@ -130,6 +130,423 @@ public class main extends JFrame {
 	}
 	
 	// NOTE: Pipeline
+	/*public void pipeline(ArrayList<Code> codes)
+	{
+		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
+		for (int x = 0; x < 100; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
+		{
+			for (int y = 0; y < 100; y++)
+				table_2.setValueAt("", x, y);
+		}
+		System.out.println("Size is: " + codes.size()); // NOTE: Pinapakita kung ilang cycles na
+		for (int x = 0; x < 100; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
+		{
+			for (int y = 0; y < 100; y++)
+				table_2.setValueAt("", x, y);
+		}
+		
+		for (int a = 0; a < codes.size(); a++)
+		{
+			dependency = false;
+			stall = false;
+			if (a == 0)
+			{
+				table_2.setValueAt("IF", a, a+0);
+				table_2.setValueAt("ID", a, a+1);
+				table_2.setValueAt("EX", a, a+2);
+				table_2.setValueAt("MEM", a, a+3);
+				table_2.setValueAt("WB", a, a+4);
+				System.out.println("PRINTED FIRST INST");
+			}
+			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == false)
+			{
+				tempA = a;
+				while (table_2.getValueAt(a-1, tempA).toString().equals("IF") || table_2.getValueAt(a-1, tempA).toString().equals(""))
+				{
+					tempA++;
+					//table_2.setValueAt("IF", a, tempA+1);
+				}
+				System.out.println("TempA is " + tempA);
+				table_2.setValueAt("IF", a, tempA);
+				stall = false;
+				System.out.println("No stalls before me!");
+			}
+			else if (a != 0 && table_2.getValueAt(a-1, a+0).toString().equals("*") == true)
+			{
+				System.out.println("There is a stall before me!");
+				stall = true;
+				tempCol = a+0;
+				while (table_2.getValueAt(a-1, tempCol).toString().equals("*"))
+				{
+					table_2.setValueAt("*", a, tempCol);
+					tempCol++;
+				}
+				System.out.println("Printed stalls!");
+				while (table_2.getValueAt(a-1, tempCol).toString().equals("IF") || table_2.getValueAt(a-1, tempCol).toString().equals("") || table_2.getValueAt(a-1, tempCol).toString().equals("*"))
+				{
+					tempCol++;
+					//table_2.setValueAt("IF", a, tempCol);
+				}
+				table_2.setValueAt("IF", a, tempCol);
+				System.out.println("Fetch! TempCol is " + tempCol);
+			}
+			System.out.println(codes.get(a).getInst().toUpperCase());
+			switch(codes.get(a).getInst().toUpperCase())
+			{
+				case "DADDU":
+				case "SLT":
+				case "SELEQZ":
+				case "DMULU":
+				case "DMUHU":
+					for (int b = 0; b < a; b++)
+					{
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						System.out.println("Current RS is " + codes.get(a).getRs());
+						if 
+						(
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							( 
+								(codes.get(a).getRs().equals(codes.get(b).getRt()))
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							( 
+								(codes.get(a).getRt().equals(codes.get(b).getRt()))
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+						)
+						{
+							System.out.println("Dependent on R" + codes.get(b).getRt());
+							System.out.println("I am dependent! And I am instruction #" + a + " depending on instruction #" + b);
+							dependency = true;
+							for (int c = 0; c < 100; c++)
+							{
+								int write, start = a;
+								int numStalls = 0;
+								int d = 0;
+								
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									for (int x = 0; x < 100; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									System.out.println("IF of dependent inst is at " + start);
+									if (dependency == true)
+									{
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}
+										if (numStalls > 0)
+										{
+											while (numStalls > 0)
+											{
+												table_2.setValueAt("*", a, (c - numStalls + 1));
+												numStalls--;
+											}
+											table_2.setValueAt("ID", a, write+1);
+											table_2.setValueAt("EX", a, write+2);
+											table_2.setValueAt("MEM", a, write+3);
+											table_2.setValueAt("WB", a, write+4);
+										}
+										else
+										{
+											int lookupID = 0;
+											for (int e = 0; e < 100; e++)
+											{
+												if (table_2.getValueAt(a-1, e).toString().equals("ID"))
+													lookupID = e;
+											}
+											table_2.setValueAt("IF", a, lookupID);
+											table_2.setValueAt("ID", a, lookupID+1);
+											table_2.setValueAt("EX", a, lookupID+2);
+											table_2.setValueAt("MEM", a, lookupID+3);
+											table_2.setValueAt("WB", a, lookupID+4);
+										}
+										
+									}
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent! B");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					break;
+				case "LD":
+				case "DADDIU":
+					for (int b = 0; b < a; b++)
+					{
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						if
+						(
+							(
+								codes.get(a).getRs().equals(codes.get(b).getRt()) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+							||
+							( 
+								(codes.get(a).getRs().equals(codes.get(b).getRd()))
+								&&  
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+						)
+						{
+							System.out.println("I am dependent! And I am instruction #" + a);
+							dependency = true;
+							for (int c = 0; c < 100; c++)
+							{
+								int write, start = a;
+								int numStalls = 0;
+								int d = 0;
+								
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									for (int x = 0; x < 100; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									if (stall == false || (stall == true && dependency == true))
+									{
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}
+										while (numStalls != 0)
+										{
+											table_2.setValueAt("*", a, (c - numStalls + 1));
+											numStalls--;
+										}
+										table_2.setValueAt("ID", a, write+1);
+										table_2.setValueAt("EX", a, write+2);
+										table_2.setValueAt("MEM", a, write+3);
+										table_2.setValueAt("WB", a, write+4);
+									}
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent! B");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					break;
+				case "SD":
+				case "BEQC":
+					for (int b = 0; b < a; b++)
+					{
+						System.out.println("Entered loop!");
+						System.out.println("Dependency is " + dependency);
+						System.out.println("Stall is " + stall);
+						if
+						(
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							(
+								(codes.get(a).getRs().equals(codes.get(b).getRt()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRt())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRd()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+								|| codes.get(b).getInst().toUpperCase().equals("SLT")
+								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+							)
+							||
+							(
+								(codes.get(a).getRt().equals(codes.get(b).getRt()) 
+								|| codes.get(a).getRt().equals(codes.get(b).getRt())) 
+								&& 
+								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+								|| codes.get(b).getInst().toUpperCase().equals("LD"))
+							)
+						)
+						{
+							System.out.println("I am dependent! And I am instruction #" + a);
+							dependency = true;
+							for (int c = 0; c < 100; c++)
+							{
+								int write, start = a;
+								int numStalls = 0;
+								int d = 0;
+								
+								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								{
+									for (int x = 0; x < 100; x++)
+									{
+										if (table_2.getValueAt(a, x).toString().equals("IF"))
+											start = x;
+									}
+									write = c;
+									System.out.println("WB of primary inst is at " + write);
+									if (stall == false || (stall == true && dependency == true))
+									{
+										numStalls = write - start;
+										d = numStalls;
+										System.out.println("Number of stalls should be " + d);
+										for (int x = a; x <= c; x++)
+										{
+											table_2.setValueAt("*", a, x);
+										}
+										while (numStalls != 0)
+										{
+											table_2.setValueAt("*", a, (c - numStalls + 1));
+											numStalls--;
+										}
+										table_2.setValueAt("ID", a, write+1);
+										table_2.setValueAt("EX", a, write+2);
+										table_2.setValueAt("MEM", a, write+3);
+										table_2.setValueAt("WB", a, write+4);
+									}
+									else if (stall == true && tempCol > write)
+									{
+										System.out.println("TempCol is " + tempCol);
+										table_2.setValueAt("ID", a, tempCol+1);
+										table_2.setValueAt("EX", a, tempCol+2);
+										table_2.setValueAt("MEM", a, tempCol+3);
+										table_2.setValueAt("WB", a, tempCol+4);
+									}
+								}
+								
+								//System.out.println("Printed everything else!");
+							}
+							System.out.println("Printed everything else!");
+						}
+						else if (dependency == false && stall == false)
+						{
+							System.out.println("I am not dependent!");
+							table_2.setValueAt("ID", a, tempA+1);
+							table_2.setValueAt("EX", a, tempA+2);
+							table_2.setValueAt("MEM", a, tempA+3);
+							table_2.setValueAt("WB", a, tempA+4);
+						}
+						else if (dependency == false && stall == true)
+						{
+							System.out.println("I am not dependent! B");
+							table_2.setValueAt("ID", a, tempCol+1);
+							table_2.setValueAt("EX", a, tempCol+2);
+							table_2.setValueAt("MEM", a, tempCol+3);
+							table_2.setValueAt("WB", a, tempCol+4);
+						}
+					}
+					break;
+			}
+		}
+	}
+	*/
+	
 	public void pipeline(ArrayList<Code> codes)
 	{
 		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
@@ -544,6 +961,433 @@ public class main extends JFrame {
 					break;
 			}
 		}
+		
+		
+		
+		
+		
+		
+		
+		int cols =0;
+		
+		for (cols = 0; cols < 100; cols++)
+		{
+			if (table_2.getValueAt(codes.size() - 1, cols).toString().equals("WB"))
+				break;
+		}
+		cols++;
+		for (int j = 0; j < cols; j++)
+			cycles.add(new Cycle());
+		
+		System.out.println("Num of cycles: " + cols);
+		
+		
+		for (int x = 0; x < cols; x++)
+		{
+			for (int y = 0; y < codes.size(); y++)
+			{
+				// NOTE: Pipeline register (kung IF, ID, etc)
+				String reg = table_2.getValueAt(y, x).toString();		
+				switch(reg)
+				{
+					// NOTE: Ito yung mga gagawin pag IF na 
+					case "IF":	
+						System.out.println("LINDT");
+						
+						// NOTE: IR gets opcode of instruction
+						cycles.get(x).setIF_ID_IR(codes.get(y).getOpcode());
+						System.out.println("OPCODE!!! " + codes.get(y).getOpcode());
+						
+						// NOTE: temp is PC + 4
+						int temp = Integer.parseInt(codes.get(y).getPcHex(), 16) + 4;
+						
+						cycles.get(x).setIF_ID_NPC(Integer.toHexString(temp));
+						
+						cycles.get(x).setPC(codes.get(y).getPcHex());
+						break;
+						
+					// NOTE: Ito yung mga gagawin pag ID na 
+					case "ID":
+						System.out.println("HERSHEYS");
+						
+						// NOTE: Kinukuha laman ni RS (aka register A)
+						int temp2 = Integer.parseInt(codes.get(y).getRs(), 2);
+						System.out.println(temp2);
+						String laman = registers.get(temp2).getValue();
+						cycles.get(x).setID_EX_A(laman);
+						System.out.println(cycles.get(x).getID_EX_A());
+						
+						// NOTE: Kinukuha laman ni RT (aka register B)
+						temp2 = Integer.parseInt(codes.get(y).getRt(), 2);
+						System.out.println(temp2);
+						laman = registers.get(temp2).getValue();
+						cycles.get(x).setID_EX_B(laman);
+						System.out.println(cycles.get(x).getID_EX_B());
+						
+						// NOTE: Kinukuha yung immediate value sa opcode
+						String hexImm2 = codes.get(y).getOpcode().substring(4);
+						
+						// NOTE: Converts first digit of immediate to 4-bit binary
+						char first = hexImm2.charAt(0);
+						String first2 = Character.toString(first);
+						System.out.println("IMM 1: " + first2);
+						int firstDigit = Integer.parseInt(first2, 16);
+						String firstBin = String.format("%4s", Integer.toBinaryString(firstDigit)).replace(' ', '0');
+						System.out.println("BIN 1  " + firstBin);
+						
+						// NOTE: Converts second digit of immediate to 4-bit binary
+						char second = hexImm2.charAt(1);
+						String second2 = Character.toString(second);
+						System.out.println("IMM 2: " + second2);
+						int secondDigit = Integer.parseInt(second2, 16);
+						String secondBin = String.format("%4s", Integer.toBinaryString(secondDigit)).replace(' ', '0');
+						System.out.println("BIN 2  " + secondBin);
+						
+						// NOTE: Converts third digit of immediate to 4-bit binary
+						char third = hexImm2.charAt(2);
+						String third2 = Character.toString(third);
+						System.out.println("IMM 3: " + third2);
+						int thirdDigit = Integer.parseInt(third2, 16);
+						String thirdBin = String.format("%4s", Integer.toBinaryString(thirdDigit)).replace(' ', '0');
+						System.out.println("BIN 3  " + thirdBin);
+						
+						// NOTE: Converts fourth digit of immediate to 4-bit binary
+						char fourth = hexImm2.charAt(3);
+						String fourth2 = Character.toString(fourth);
+						System.out.println("IMM 4: " + fourth2);
+						int fourthDigit = Integer.parseInt(fourth2, 16);
+						String fourthBin = String.format("%4s", Integer.toBinaryString(fourthDigit)).replace(' ', '0');
+						System.out.println("BIN 4  " + fourthBin);
+						
+						// NOTE: Immediate in binary
+						String binImm = firstBin + secondBin + thirdBin + fourthBin;
+						
+						// NOTE: Sign extend immediate
+						while (binImm.length() < 64)
+						{
+							binImm = binImm.charAt(0) + binImm;
+						}
+						
+						// NOTE: Converts binary immediate to hex
+						BigInteger big = new BigInteger (binImm, 2);
+						hexImm2 = big.toString(16);
+						hexImm2 = String.format("%16s", hexImm2).replace(' ', '0');
+						//hexImm2 = "000000000000" + hexImm2;
+						System.out.println(hexImm2);
+						cycles.get(x).setID_EX_IMM(hexImm2);
+						System.out.println("Immediate is " + cycles.get(x).getID_EX_IMM());
+						
+						// NOTE: Gets previous IR
+						int prev = x-1;
+						while (cycles.get(prev).getIF_ID_IR() == null)
+							prev--;
+						cycles.get(x).setID_EX_IR(cycles.get(prev).getIF_ID_IR());
+						
+						// NOTE: Gets previous NPC
+						cycles.get(x).setID_EX_NPC(cycles.get(x-1).getIF_ID_NPC());
+						break;
+						
+					// NOTE: Ito yung mga gagawin pag EX na 
+					case "EX":
+						switch(codes.get(y).getInst().toUpperCase())
+						{
+							case "DADDU":
+								// NOTE: Converts ID/EX.A to int
+								BigInteger regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								BigInteger regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: A + B
+								BigInteger ans = regA.add(regB);
+								// Converts answer to hex -> stores answer in EX/MEM.ALU
+								cycles.get(x).setEX_MEM_ALU(ans.toString(16));
+								// NOTE: Zero extend if needed
+								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+								{
+									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
+								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX/MEM.Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+								
+							case "DADDIU":
+								// NOTE: Converts ID/EX.A to big integer
+								BigInteger regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								System.out.println("reg A: " + regA2);
+								// NOTE: Converts ID/EX.Imm to big integer
+								BigInteger tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
+								System.out.println("tempImm: " + tempImm);
+								// NOTE: Answer gets A + Imm
+								BigInteger ans2 = regA2.add(tempImm);
+								System.out.println("ans: "+ ans2);
+								// NOTE: Converts answer to hex -> ALU gets answer
+								cycles.get(x).setEX_MEM_ALU(ans2.toString(16));
+								// NOTE: Zero extend if needed
+								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+								{
+									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
+								}
+								// NOTE: Truncates leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+								
+							case "SLT":
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to in
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: Answer is 1 if A < B
+								int answer = 0;
+								if (regA.compareTo(regB) == -1)
+									answer = 1;
+								// NOTE: Converted ans to hex -> EX/MEM.ALU gets ans
+								cycles.get(x).setEX_MEM_ALU(Integer.toHexString(answer));
+								// NOTE: Zero extend if needed
+								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+								{
+									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
+								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX/MEM.Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+								
+							case "SELEQZ":
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: Converted the register number to int
+								int num = Integer.parseInt(codes.get(y).getRs(), 2);
+								// NOTE: If ID/EX.B == 0, answer gets RS
+								BigInteger zero = new BigInteger("0");
+								ans = new BigInteger("0");
+								if (regB.compareTo(zero) == 0)
+									ans = new BigInteger(registers.get(num).getValue(), 16);
+								// NOTE: Converts answer to hex -> EX/MEM.ALU gets answer
+								cycles.get(x).setEX_MEM_ALU(ans.toString(16));
+								// NOTE: Zero extend if needed
+								while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+								{
+									cycles.get(x).setEX_MEM_ALU("0" + cycles.get(x).getEX_MEM_ALU());
+								}
+								// NOTE: Truncate leading digits if ALU is more than 16 bits
+								if (cycles.get(x).getEX_MEM_ALU().length() > 16)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(Math.max(cycles.get(x).getEX_MEM_ALU().length() - 16, 0)));
+								
+								// NOTE: EX.MEM/Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+							
+							case "DMULU":
+							case "DMUHU":
+								// NOTE: Converts ID/EX.A to int
+								regA = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								// NOTE: Converts ID/EX.B to int
+								regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
+								// NOTE: answer gets A * B
+								ans = regA.multiply(regB);
+								// NOTE: Converts answer to hex
+								String ansHex = ans.toString(16);
+								System.out.println("Ans in hex: " + ansHex + " -- " + ansHex.length());
+								// NOTE: Truncate leading digits if answer is more than 16 bits OR zero extend if less than 16 bits
+								if (ansHex.length() > 16)
+									ansHex = ansHex.substring(Math.max(ansHex.length() - 16, 0));
+								else ansHex = String.format("%16s", ansHex).replace(' ', '0');
+								if (codes.get(y).getInst().toUpperCase().equals("DMULU"))
+								{
+									// NOTE: EX/MEM.ALU gets ansHex (LO)
+									cycles.get(x).setEX_MEM_ALU(ansHex);
+									char oneDig = ansHex.charAt(0);
+									String oneDig2 = Character.toString(oneDig);
+									System.out.println("DIG 1: " + oneDig2);
+									int firstDig = Integer.parseInt(oneDig2, 16);
+									String oneBin = String.format("%4s", Integer.toBinaryString(firstDig)).replace(' ', '0');
+									System.out.println("BIN 1  " + oneBin);
+									char sign = '0';
+									if (oneBin.charAt(0) == '1')
+										sign = 'F';
+									
+									while (cycles.get(x).getEX_MEM_ALU().length() < 16)
+									{
+										cycles.get(x).setEX_MEM_ALU(Character.toString(sign) + cycles.get(x).getEX_MEM_ALU());
+									}
+								}
+								// NOTE: if DMUHU
+								else
+								{
+									cycles.get(x).setEX_MEM_ALU(ansHex);
+									// NOTE: Zero extend if ALU is less than 32 digits
+									while (cycles.get(x).getEX_MEM_ALU().length() < 32)
+									{
+										cycles.get(x).setEX_MEM_ALU(ansHex.charAt(0) + cycles.get(x).getEX_MEM_ALU());
+									}
+									// NOTE: EX/MEM.ALU gets upper 16 bits of ansHex (HI)
+									cycles.get(x).setEX_MEM_ALU(cycles.get(x).getEX_MEM_ALU().substring(0, 16));
+								}
+								
+								// NOTE: EX/MEM.Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+								
+							case "LD":
+							case "SD":
+								// NOTE: Converts ID/EX.A to big integer
+								regA2 = new BigInteger(cycles.get(x-1).getID_EX_A(), 16);
+								System.out.println("reg A: " + regA2);
+								// NOTE: Converts ID/EX.Imm to big integer
+								tempImm = new BigInteger(cycles.get(x-1).getID_EX_IMM(), 16);
+								System.out.println("tempImm: " + tempImm);
+								// NOTE: answer gets A + Imm 
+								BigInteger ans2A = regA2.add(tempImm);
+								System.out.println("ans: "+ ans2A);
+								// NOTE: Converts answer to hex -> EX/MEM.ALU gets answer
+								cycles.get(x).setEX_MEM_ALU(ans2A.toString(16));
+								System.out.println(tempImm.toString(16));
+								// NOTE: Zero extend if needed
+								cycles.get(x).setEX_MEM_ALU(String.format("%16s", cycles.get(x).getEX_MEM_ALU()).replace(' ', '0'));
+								System.out.println(cycles.get(x).getEX_MEM_ALU());
+								
+								// NOTE: EX/MEM.B = ID/EX.B
+								cycles.get(x).setEX_MEM_B(cycles.get(x-1).getID_EX_B());
+								
+								// NOTE: EX/MEM.Cond = 0
+								cycles.get(x).setEX_MEM_COND("0");
+								break;
+						}
+						
+						// NOTE: EX/MEM.IR = ID/EX.IR
+						prev = x-1;
+						while (cycles.get(prev).getID_EX_IR() == null)
+							prev--;
+						cycles.get(x).setEX_MEM_IR(cycles.get(prev).getID_EX_IR());
+						
+						break;
+						
+					// NOTE: Ito yung mga gagawin pag MEM na 
+					case "MEM":
+						switch(codes.get(y).getInst().toUpperCase())
+						{
+							case "DADDU":
+							case "DADDIU":
+							case "SLT":
+							case "SELEQZ":
+							case "DMULU":
+							case "DMUHU":
+								// NOTE: MEM/WB.ALU = EX/MEM.ALU
+								cycles.get(x).setMEM_ALUoutput(cycles.get(x-1).getEX_MEM_ALU());
+								break;
+								
+							case "LD":
+								// NOTE: Gets the memory address
+								String address = cycles.get(x-1).getEX_MEM_ALU().substring(cycles.get(x-1).getEX_MEM_ALU().length()-4);
+								System.out.println("ADDRESS FOR LD AT " + address);
+								int a = 0;
+								// NOTE: Looks for the index of memory address from ArrayList data
+								for (a = 0; a < data.size(); a++)
+								{
+									if (data.get(a).getAddressHex().equals(address))
+										break;
+								}
+								System.out.println("Value: " + data.get(a).getValue());
+								
+								// NOTE: MEM/WB.LMD gets value of memory address
+								cycles.get(x).setMEM_WB_LMD(data.get(a).getValue());
+								break;
+								
+							case "SD":
+								// NOTE: Gets the memory address
+								address = cycles.get(x-1).getEX_MEM_ALU().substring(12);
+								System.out.println("ADDRESS " + address);
+								System.out.println("INDEX OF " + data.indexOf(address));
+								// NOTE: Looks for the index of memory address from ArrayList data
+								for (a = 0; a < data.size(); a++)
+								{
+									if (data.get(a).getAddressHex().equals(address))
+										break;
+								}
+								
+								// NOTE: Sets value of memory address to EX/MEM.B
+								data.get(a).setValue(cycles.get(x-1).getEX_MEM_B());
+								// NOTE: Updates memory table
+								table_1.getModel().setValueAt(cycles.get(x-1).getEX_MEM_B(), a, 1);
+								// NOTE: Assigns display message
+								cycles.get(x).setWbDisplay("Memory " + address + " = " + cycles.get(x).getEX_MEM_B());
+								break;
+						}
+						
+						// NOTE: MEM/WB.IR = EX/MEM.IR
+						prev = x-1;
+						while (cycles.get(prev).getEX_MEM_IR() == null)
+							prev--;
+						cycles.get(x).setMEM_WB_IR(cycles.get(prev).getEX_MEM_IR());
+						break;
+						
+					// NOTE: Ito yung mga gagawin pag WB na 
+					case "WB":
+						//cycles.get(x).setWB_IR(cycles.get(x-1).getMEM_WB_IR());
+						switch(codes.get(y).getInst().toUpperCase())
+						{
+							case "DADDU":
+							case "SLT":
+							case "SELEQZ":
+							case "DMULU":
+							case "DMUHU":
+								// NOTE: Gets the register number of the dest 
+								int reg2 = Integer.parseInt(codes.get(y).getRd(), 2);
+								// NOTE: Dest register gets ALU
+								registers.get(reg2).setValue(cycles.get(x-1).getMEM_ALUoutput());
+								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
+								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
+								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
+								break;
+							case "DADDIU":
+								// NOTE: Gets the register number of the dest
+								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
+								// NOTE: Dest register gets ALU
+								registers.get(reg2).setValue(cycles.get(x-1).getMEM_ALUoutput());
+								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
+								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
+								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
+								break;
+							case "LD":
+								// NOTE: Gets the register number of the dest
+								reg2 = Integer.parseInt(codes.get(y).getRt(), 2);
+								// NOTE: Dest register gets ALU
+								registers.get(reg2).setValue(cycles.get(x-1).getMEM_WB_LMD());
+								System.out.println("WB TO REG " + reg2);
+								
+								// NOTE: Updates registers table
+								table.getModel().setValueAt(registers.get(reg2).getValue(), reg2, 1);
+								// NOTE: Assigns display message for WB
+								cycles.get(x).setWbDisplay("R" + reg2 + " = " + registers.get(reg2).getValue());
+								break;
+						}
+					case "*":
+					case "":
+						break;
+				}
+			}
+			
+			
+		}
+		
 	}
 	
 	/**
@@ -972,7 +1816,7 @@ public class main extends JFrame {
 		btnInitializeData.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
 				memError = false;
-				for (int a = 1; a < 8192; a++)
+				for (int a = 0; a < 8192; a++)
 				{
 					// NOTE: If memory data is not 16 bits long
 					if (table_1.getModel().getValueAt(a, 1).toString().length() != 16)
@@ -1140,9 +1984,7 @@ public class main extends JFrame {
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
 				{null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null},
 			},
-			new String[] {
-				"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z", "AA", "AB", "AC", "AD", "AE", "AF", "AG", "AH", "AI", "AJ", "AK", "AL", "AM", "AN", "AO", "AP", "AQ", "AR", "AS", "AT", "AU", "AV", "AW", "AX", "AY", "AZ", "BA", "BB", "BC", "BD", "BE", "BF", "BG", "BH", "BI", "BJ", "BK", "BL", "BM", "BN", "BO", "BP", "BQ", "BR", "BS", "BT", "BU", "BV", "BW", "BX", "BY", "BZ", "CA", "CB", "CC", "CD", "CE", "CF", "CG", "CH", "CI", "CJ", "CK", "CL", "CM", "CN", "CO", "CP", "CQ", "CR", "CS", "CT", "CU", "CV"
-			}
+			columns
 		) {
 			boolean[] columnEditables = new boolean[] {
 				false, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true, true

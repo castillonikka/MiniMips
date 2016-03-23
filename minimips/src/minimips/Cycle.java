@@ -19,6 +19,7 @@ public class Cycle {
 	private String MEM_WB_ALU;
 	private String MEM_ALUoutput;
 	private String MEM_WB_LMD;
+	private String WB_IR;
 	private String wbDisplay;
 	private String code;
 	private String opcode;
@@ -142,5 +143,11 @@ public class Cycle {
 	}
 	public void setMEM_ALUoutput(String mEM_ALUoutput) {
 		MEM_ALUoutput = mEM_ALUoutput;
+	}
+	public String getWB_IR() {
+		return WB_IR;
+	}
+	public void setWB_IR(String wB_IR) {
+		WB_IR = wB_IR;
 	}
 }
