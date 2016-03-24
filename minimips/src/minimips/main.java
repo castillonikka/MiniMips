@@ -118,7 +118,7 @@ public class main extends JFrame {
 		{
 			this.data.add(new Memory());
 			this.data.get(a).setAddressHex(value);
-			this.data.get(a).setValue("0000000000000000");
+			this.data.get(a).setValue("00");
 			value++;
 		}
 	}
@@ -126,7 +126,7 @@ public class main extends JFrame {
 	// NOTE: Used for error checking; Yung maling in-initialize na memory address, binabalik sa 0
 	public void initializeData(int index)
 	{
-		this.data.get(index).setValue("0000000000000000");
+		this.data.get(index).setValue("00");
 	}
 	
 	// NOTE: Pipeline
@@ -1098,6 +1098,7 @@ public class main extends JFrame {
 								BigInteger regB = new BigInteger(cycles.get(x-1).getID_EX_B(), 16);
 								// NOTE: A + B
 								BigInteger ans = regA.add(regB);
+								System.out.println("Answer is " + ans.toString(16));
 								// Converts answer to hex -> stores answer in EX/MEM.ALU
 								cycles.get(x).setEX_MEM_ALU(ans.toString(16));
 								// NOTE: Zero extend if needed
@@ -1300,9 +1301,16 @@ public class main extends JFrame {
 										break;
 								}
 								System.out.println("Value: " + data.get(a).getValue());
-								
+								String value8 = data.get(a+7).getValue();
+								String value7 = data.get(a+6).getValue();
+								String value6 = data.get(a+5).getValue();
+								String value5 = data.get(a+4).getValue();
+								String value4 = data.get(a+3).getValue();
+								String value3 = data.get(a+2).getValue();
+								String value2 = data.get(a+1).getValue();
+								String value1 = data.get(a).getValue();
 								// NOTE: MEM/WB.LMD gets value of memory address
-								cycles.get(x).setMEM_WB_LMD(data.get(a).getValue());
+								cycles.get(x).setMEM_WB_LMD(value8 + value7 + value6 + value5 + value4 + value3 + value2 + value1);
 								break;
 								
 							case "SD":
@@ -1317,10 +1325,33 @@ public class main extends JFrame {
 										break;
 								}
 								
+								String pair1 = cycles.get(x-1).getEX_MEM_B().substring(0, 2);
+								String pair2 = cycles.get(x-1).getEX_MEM_B().substring(2, 4);
+								String pair3 = cycles.get(x-1).getEX_MEM_B().substring(4, 6);
+								String pair4 = cycles.get(x-1).getEX_MEM_B().substring(6, 8);
+								String pair5 = cycles.get(x-1).getEX_MEM_B().substring(8, 10);
+								String pair6 = cycles.get(x-1).getEX_MEM_B().substring(10, 12);
+								String pair7 = cycles.get(x-1).getEX_MEM_B().substring(12, 14);
+								String pair8 = cycles.get(x-1).getEX_MEM_B().substring(14, 16);
+								
 								// NOTE: Sets value of memory address to EX/MEM.B
-								data.get(a).setValue(cycles.get(x-1).getEX_MEM_B());
+								data.get(a).setValue(pair8);
+								data.get(a+1).setValue(pair7);
+								data.get(a+2).setValue(pair6);
+								data.get(a+3).setValue(pair5);
+								data.get(a+4).setValue(pair4);
+								data.get(a+5).setValue(pair3);
+								data.get(a+6).setValue(pair2);
+								data.get(a+7).setValue(pair1);
 								// NOTE: Updates memory table
-								table_1.getModel().setValueAt(cycles.get(x-1).getEX_MEM_B(), a, 1);
+								table_1.getModel().setValueAt(data.get(a).getValue(), a, 1);
+								table_1.getModel().setValueAt(data.get(a+1).getValue(), a+1, 1);
+								table_1.getModel().setValueAt(data.get(a+2).getValue(), a+2, 1);
+								table_1.getModel().setValueAt(data.get(a+3).getValue(), a+3, 1);
+								table_1.getModel().setValueAt(data.get(a+4).getValue(), a+4, 1);
+								table_1.getModel().setValueAt(data.get(a+5).getValue(), a+5, 1);
+								table_1.getModel().setValueAt(data.get(a+6).getValue(), a+6, 1);
+								table_1.getModel().setValueAt(data.get(a+7).getValue(), a+7, 1);
 								// NOTE: Assigns display message
 								cycles.get(x).setWbDisplay("Memory " + address + " = " + cycles.get(x).getEX_MEM_B());
 								break;
@@ -1819,7 +1850,7 @@ public class main extends JFrame {
 				for (int a = 0; a < 8192; a++)
 				{
 					// NOTE: If memory data is not 16 bits long
-					if (table_1.getModel().getValueAt(a, 1).toString().length() != 16)
+					if (table_1.getModel().getValueAt(a, 1).toString().length() != 2)
 					{
 						memError = true;
 						System.out.println("memError A");
@@ -1827,7 +1858,7 @@ public class main extends JFrame {
 					else
 					{
 						// NOTE: Checks if all characters from input are hex
-						for (int b = 0; b < 16; b++)
+						for (int b = 0; b < 2; b++)
 						{
 							if (table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '0' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '1' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '2' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '3' && 
 									table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '4' && table_1.getModel().getValueAt(a, 1).toString().charAt(b) != '5' && 
