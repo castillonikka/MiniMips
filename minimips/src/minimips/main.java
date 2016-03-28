@@ -57,7 +57,8 @@ public class main extends JFrame {
 	private boolean stall;
 	private boolean jumpCheck;
 	private int tempCol, tempA;
-	private int jump = -1;
+	private int jump;
+	private int arvin;
 
 	/**
 	 * Launch the application.
@@ -152,21 +153,32 @@ public class main extends JFrame {
 		// NOTE: Kinukuha laman ni RS (aka register A)
 		System.out.println("CODE INDEX " + codeIndex);
 		
-		int temp2 = Integer.parseInt(codes.get(codeIndex).getRs(), 2);
-		System.out.println(temp2);
-		String laman = registers.get(temp2).getValue();
-		System.out.println(numCycles);
-		System.out.println(laman);
-		cycles.get(numCycles).setID_EX_A(laman);
-		System.out.println(cycles.get(numCycles).getID_EX_A());
-		
-		// NOTE: Kinukuha laman ni RT (aka register B)
-		temp2 = Integer.parseInt(codes.get(codeIndex).getRt(), 2);
-		System.out.println(temp2);
-		laman = registers.get(temp2).getValue();
-		cycles.get(numCycles).setID_EX_B(laman);
-		System.out.println(cycles.get(numCycles).getID_EX_B());
-		
+		if (codes.get(codeIndex).getInst().toUpperCase().equals("BC"))
+		{
+			String opcodeBin = new BigInteger (codes.get(codeIndex).getOpcode(), 16).toString(2);
+			String rsBin = opcodeBin.substring(6, 11);
+			String rtBin = opcodeBin.substring(11, 16);
+			cycles.get(numCycles).setID_EX_A(rsBin);
+			cycles.get(numCycles).setID_EX_B(rtBin);
+		}
+		else
+		{
+			int temp2 = Integer.parseInt(codes.get(codeIndex).getRs(), 2);
+			System.out.println(temp2);
+			String laman = registers.get(temp2).getValue();
+			System.out.println(numCycles);
+			System.out.println(laman);
+			cycles.get(numCycles).setID_EX_A(laman);
+			System.out.println(cycles.get(numCycles).getID_EX_A());
+			
+			// NOTE: Kinukuha laman ni RT (aka register B)
+			temp2 = Integer.parseInt(codes.get(codeIndex).getRt(), 2);
+			System.out.println(temp2);
+			laman = registers.get(temp2).getValue();
+			cycles.get(numCycles).setID_EX_B(laman);
+			System.out.println(cycles.get(numCycles).getID_EX_B());
+		}
+			
 		// NOTE: Kinukuha yung immediate value sa opcode
 		String hexImm2 = codes.get(codeIndex).getOpcode().substring(4);
 		
@@ -225,8 +237,8 @@ public class main extends JFrame {
 			prev--;
 		cycles.get(numCycles).setID_EX_IR(cycles.get(prev).getIF_ID_IR());
 		
-		// NOTE: Gets previous NPC
-		cycles.get(numCycles).setID_EX_NPC(cycles.get(numCycles-1).getIF_ID_NPC());
+		// NOTE: Gets previous NPC changed prev
+		cycles.get(numCycles).setID_EX_NPC(cycles.get(prev).getIF_ID_NPC());
 	}
 	
 	public void exPipeline(int codeIndex, int numCycles)
@@ -236,16 +248,30 @@ public class main extends JFrame {
 		{
 			case "BC":
 			case "BEQC":
-				BigInteger tempImm1 = new BigInteger(cycles.get(numCycles-1).getID_EX_IMM(), 16);
+				/*BigInteger tempImm1 = new BigInteger(cycles.get(numCycles-1).getID_EX_IMM(), 16);
 				String tempImm2 = tempImm1.toString(2);
 				int tempImm3 = Integer.parseInt(tempImm2, 2) << 2;
 				
+				System.out.println("hello " + tempImm3 + " and " + cycles.get(numCycles-1).getID_EX_NPC());
+				
 				BigInteger tempNPC1 = new BigInteger(cycles.get(numCycles-1).getID_EX_NPC(), 16);
 				String tempNPC2 = tempNPC1.toString(2);
-				int tempNPC3 = Integer.parseInt(tempNPC2, 2);
+				int tempNPC3 = Integer.parseInt(tempNPC2, 2);*/
 				
-				int sum = tempImm3 + tempNPC3;
+				//int sum = tempImm3 + tempNPC3;
+				//String sumHex = Integer.toHexString(sum);
+				
+				int x = 0;
+				for (x = 0; x < codes.size(); x++)
+				{
+					if (codes.get(x).getLabel() != null)
+						if (codes.get(x).getLabel().equals(codes.get(codeIndex).getBranchLabel()))
+							break;
+				}
+				int sum = x * 4;
 				String sumHex = Integer.toHexString(sum);
+				
+				System.out.println("Address: " + sumHex);
 				
 				cycles.get(numCycles).setEX_MEM_ALU(sumHex);
 				
@@ -257,8 +283,11 @@ public class main extends JFrame {
 					case "BEQC":
 						String prevA = cycles.get(numCycles-1).getID_EX_A();
 						String prevB = cycles.get(numCycles-1).getID_EX_B();
-						int pA = Integer.parseInt(prevA, 16);
-						int pB = Integer.parseInt(prevB, 16);
+						BigInteger pA = new BigInteger(prevA, 16);
+						BigInteger pB = new BigInteger(prevB, 16);
+						
+						System.out.println("pA " + pA + " and pB " + pB);
+						
 						if (pA == pB)
 							cycles.get(numCycles).setEX_MEM_COND("1");
 						else cycles.get(numCycles).setEX_MEM_COND("0");
@@ -609,6 +638,7 @@ public class main extends JFrame {
 		}
 		System.out.println("Size is: " + codes.size()); // NOTE: Pinapakita kung ilang cycles na
 		
+		
 		for (int a = 0; a < codes.size(); a++)
 		{
 			dependency = false;
@@ -651,6 +681,36 @@ public class main extends JFrame {
 				
 				System.out.println("PRINTED FIRST INST");
 			}
+			else if (jumpCheck == true)
+			{
+				//int temp = jump - a - 1;
+				System.out.println("PREV A: " + a);
+				System.out.println("JUMP: " + jump);
+				a = jump;
+				int col = 0;
+				int temp = 0;
+				
+				for (temp = 0; temp < codes.size(); temp++)
+				{
+					if (codes.get(temp).getBranchLabel() != null)
+						if (codes.get(temp).getBranchLabel().equals(codes.get(a).getLabel()))
+							break;
+						
+				}
+				
+				//System.out.println("BRANCH LABEL: " + codes.get(2).getBranchLabel());
+				System.out.println("A IS NOW: " + a);
+				System.out.println("TEMP IS: " + temp);
+				System.out.println("COL IS: " + col);
+				System.out.println("LABEL IS: " + codes.get(a).getLabel());
+				
+				while (table_2.getValueAt(temp, col).toString().equals("WB") == false)
+					col++;
+				table_2.setValueAt("IF", a, col);
+				cycles.add(new Cycle());
+				ifPipeline(a, col);
+				arvin = col;
+			}
 			else if (a != 0 && table_2.getValueAt(a-1, a).toString().equals("*") == false)
 			{
 				tempA = a;
@@ -689,209 +749,310 @@ public class main extends JFrame {
 			int column = 0;
 			switch(codes.get(a).getInst().toUpperCase())
 			{
+				case "BC":
+					if (stall == false)
+						column = tempA;
+					else
+						column = tempCol;
+					//jumpCheck = true;
+					
+					table_2.setValueAt("ID", a, column+1);
+					cycles.add(new Cycle());
+					idPipeline(a, column+1);
+					table_2.setValueAt("EX", a, column+2);
+					cycles.add(new Cycle());
+					exPipeline(a, column+2);
+					table_2.setValueAt("MEM", a, column+3);
+					cycles.add(new Cycle());
+					memPipeline(a, column+3);
+					table_2.setValueAt("WB", a, column+4);
+					cycles.add(new Cycle());
+					wbPipeline(a, column+4);
+					break;
 				case "DADDU":
 				case "SLT":
 				case "SELEQZ":
 				case "DMULU":
 				case "DMUHU":
-					for (int b = 0; b < a; b++)
+					if (a != 0 && (codes.get(a-1).getInst().toUpperCase().equals("BC") || codes.get(a-1).getInst().toUpperCase().equals("BEQC")))
 					{
-						System.out.println("Entered loop!");
-						System.out.println("Dependency is " + dependency);
-						System.out.println("Stall is " + stall);
-						System.out.println("Current RS is " + codes.get(a).getRs());
-						if 
-						(
-							(
-								(codes.get(a).getRs().equals(codes.get(b).getRd()) 
-								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
-								&& 
-								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
-								|| codes.get(b).getInst().toUpperCase().equals("SLT")
-								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
-								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
-								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
-							)
-							||
-							( 
-								(codes.get(a).getRs().equals(codes.get(b).getRt()))
-								&& 
-								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
-								|| codes.get(b).getInst().toUpperCase().equals("LD"))
-							)
-							||
-							(
-								(codes.get(a).getRt().equals(codes.get(b).getRd()) 
-								|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
-								&& 
-								(codes.get(b).getInst().toUpperCase().equals("DADDU") 
-								|| codes.get(b).getInst().toUpperCase().equals("SLT")
-								|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
-								|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
-								|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
-							)
-							||
-							( 
-								(codes.get(a).getRt().equals(codes.get(b).getRt()))
-								&& 
-								(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
-								|| codes.get(b).getInst().toUpperCase().equals("LD"))
-							)
-						)
+						int col = 0;
+						while (table_2.getValueAt(a-1, col).toString().equals("ID") == false)
+							col++;
+						col++;
+						table_2.setValueAt("*", a, col);
+						cycles.add(new Cycle());
+						col++;
+						table_2.setValueAt("*", a, col);
+						cycles.add(new Cycle());
+						
+						int condCol = 0;
+						while (table_2.getValueAt(a-1, condCol).toString().equals("EX") == false)
+							condCol++;
+						
+						if (cycles.get(condCol).getEX_MEM_COND().equals("0"))
 						{
-							System.out.println("Dependent on R" + codes.get(b).getRt());
-							System.out.println("I am dependent! And I am instruction #" + a + " depending on instruction #" + b);
-							dependency = true;
-							for (int c = 0; c < 100; c++)
+							table_2.setValueAt("ID", a, col+1);
+							cycles.add(new Cycle());
+							table_2.setValueAt("EX", a, col+2);
+							cycles.add(new Cycle());
+							table_2.setValueAt("MEM", a, col+3);
+							cycles.add(new Cycle());
+							table_2.setValueAt("WB", a, col+4);
+							cycles.add(new Cycle());
+							
+							idPipeline(a, col+1);
+							exPipeline(a, col+2);
+							memPipeline(a, col+3);
+							wbPipeline(a, col+4);
+							
+							jump = 0;
+							jumpCheck = false;
+						}
+						else
+						{
+							jumpCheck = true;
+							String opcodeBin = new BigInteger(codes.get(a-1).getOpcode(), 16).toString(2);
+							int offset = 0;
+							switch(codes.get(a-1).getInst().toUpperCase())
 							{
-								int write, start = a;
-								int numStalls = 0;
-								int d = 0;
-								
-								if (table_2.getValueAt(b, c).toString().equals("WB"))
+								case "BC":
+									String offsetBin = opcodeBin.substring(6);
+									offset = Integer.parseInt(offsetBin, 2);
+									break;
+								case "BEQC":
+									offsetBin = opcodeBin.substring(16);
+									offset = Integer.parseInt(offsetBin, 2);
+									break;
+							}
+							jump = a + offset; 
+						}
+						
+						column = col;
+					}
+					else
+					{
+						if (jumpCheck == true)
+						{
+							jumpCheck = false;
+							
+							System.out.println("ARVIN :) " + arvin);
+							
+							table_2.setValueAt("ID", a, arvin+1);
+							table_2.setValueAt("EX", a, arvin+2);
+							table_2.setValueAt("MEM", a, arvin+3);
+							table_2.setValueAt("WB", a, arvin+4);
+							
+							column = arvin;
+							
+							idPipeline(a, column+1);
+							exPipeline(a, column+2);
+							memPipeline(a, column+3);
+							wbPipeline(a, column+4);
+						}
+						else
+						{
+							jump = 0;
+							for (int b = 0; b < a; b++)
+							{
+								System.out.println("Entered loop!");
+								System.out.println("Dependency is " + dependency);
+								System.out.println("Stall is " + stall);
+								System.out.println("Current RS is " + codes.get(a).getRs());
+								if 
+								(
+									(
+										(codes.get(a).getRs().equals(codes.get(b).getRd()) 
+										|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+										&& 
+										(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+										|| codes.get(b).getInst().toUpperCase().equals("SLT")
+										|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+										|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+										|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+									)
+									||
+									( 
+										(codes.get(a).getRs().equals(codes.get(b).getRt()))
+										&& 
+										(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+										|| codes.get(b).getInst().toUpperCase().equals("LD"))
+									)
+									||
+									(
+										(codes.get(a).getRt().equals(codes.get(b).getRd()) 
+										|| codes.get(a).getRt().equals(codes.get(b).getRd())) 
+										&& 
+										(codes.get(b).getInst().toUpperCase().equals("DADDU") 
+										|| codes.get(b).getInst().toUpperCase().equals("SLT")
+										|| codes.get(b).getInst().toUpperCase().equals("SELEQZ") 
+										|| codes.get(b).getInst().toUpperCase().equals("DMULU") 
+										|| codes.get(b).getInst().toUpperCase().equals ("DMUHU"))
+									)
+									||
+									( 
+										(codes.get(a).getRt().equals(codes.get(b).getRt()))
+										&& 
+										(codes.get(b).getInst().toUpperCase().equals("DADDIU") 
+										|| codes.get(b).getInst().toUpperCase().equals("LD"))
+									)
+								)
 								{
-									for (int x = 0; x < 100; x++)
+									System.out.println("Dependent on R" + codes.get(b).getRt());
+									System.out.println("I am dependent! And I am instruction #" + a + " depending on instruction #" + b);
+									dependency = true;
+									for (int c = 0; c < 100; c++)
 									{
-										if (table_2.getValueAt(a, x).toString().equals("IF"))
-											start = x;
-									}
-									write = c;
-									System.out.println("WB of primary inst is at " + write);
-									System.out.println("IF of dependent inst is at " + start);
-									if (dependency == true)
-									{
-										numStalls = write - start;
-										d = numStalls;
-										System.out.println("Number of stalls should be " + d);
-										/*for (int x = a; x <= c; x++)
+										int write, start = a;
+										int numStalls = 0;
+										int d = 0;
+										
+										if (table_2.getValueAt(b, c).toString().equals("WB"))
 										{
-											table_2.setValueAt("*", a, x);
-										}*/
-										if (numStalls > 0)
-										{
-											while (numStalls > 0)
+											for (int x = 0; x < 100; x++)
 											{
-												table_2.setValueAt("*", a, (c - numStalls + 1));
-												numStalls--;
+												if (table_2.getValueAt(a, x).toString().equals("IF"))
+													start = x;
 											}
-											table_2.setValueAt("ID", a, write+1);
-											cycles.add(new Cycle());
-											//idPipeline(a, write+1);
-											column = write;
-											
-											table_2.setValueAt("EX", a, write+2);
-											cycles.add(new Cycle());
-											//exPipeline(a, write+2);
-											
-											table_2.setValueAt("MEM", a, write+3);
-											cycles.add(new Cycle());
-											//memPipeline(a, write+3);
-											
-											table_2.setValueAt("WB", a, write+4);
-											cycles.add(new Cycle());
-											//wbPipeline(a, write+4);
-										}
-										else
-										{
-											int lookupID = 0;
-											for (int e = 0; e < 100; e++)
+											write = c;
+											System.out.println("WB of primary inst is at " + write);
+											System.out.println("IF of dependent inst is at " + start);
+											if (dependency == true)
 											{
-												if (table_2.getValueAt(a-1, e).toString().equals("ID"))
-													lookupID = e;
+												numStalls = write - start;
+												d = numStalls;
+												System.out.println("Number of stalls should be " + d);
+												/*for (int x = a; x <= c; x++)
+												{
+													table_2.setValueAt("*", a, x);
+												}*/
+												if (numStalls > 0)
+												{
+													while (numStalls > 0)
+													{
+														table_2.setValueAt("*", a, (c - numStalls + 1));
+														numStalls--;
+													}
+													table_2.setValueAt("ID", a, write+1);
+													cycles.add(new Cycle());
+													//idPipeline(a, write+1);
+													column = write;
+													
+													table_2.setValueAt("EX", a, write+2);
+													cycles.add(new Cycle());
+													//exPipeline(a, write+2);
+													
+													table_2.setValueAt("MEM", a, write+3);
+													cycles.add(new Cycle());
+													//memPipeline(a, write+3);
+													
+													table_2.setValueAt("WB", a, write+4);
+													cycles.add(new Cycle());
+													//wbPipeline(a, write+4);
+												}
+												else
+												{
+													int lookupID = 0;
+													for (int e = 0; e < 100; e++)
+													{
+														if (table_2.getValueAt(a-1, e).toString().equals("ID"))
+															lookupID = e;
+													}
+													table_2.setValueAt("IF", a, lookupID);
+													cycles.add(new Cycle());
+													ifPipeline(a, lookupID);
+													column = lookupID;
+													
+													table_2.setValueAt("ID", a, lookupID+1);
+													cycles.add(new Cycle());
+													//idPipeline(a, lookupID+1);
+													
+													table_2.setValueAt("EX", a, lookupID+2);
+													cycles.add(new Cycle());
+													//exPipeline(a, lookupID+2);
+													
+													table_2.setValueAt("MEM", a, lookupID+3);
+													cycles.add(new Cycle());
+													//memPipeline(a, lookupID+3);
+													
+													table_2.setValueAt("WB", a, lookupID+4);
+													cycles.add(new Cycle());
+													//wbPipeline(a, lookupID+4);
+												}
+												
 											}
-											table_2.setValueAt("IF", a, lookupID);
-											cycles.add(new Cycle());
-											ifPipeline(a, lookupID);
-											column = lookupID;
-											
-											table_2.setValueAt("ID", a, lookupID+1);
-											cycles.add(new Cycle());
-											//idPipeline(a, lookupID+1);
-											
-											table_2.setValueAt("EX", a, lookupID+2);
-											cycles.add(new Cycle());
-											//exPipeline(a, lookupID+2);
-											
-											table_2.setValueAt("MEM", a, lookupID+3);
-											cycles.add(new Cycle());
-											//memPipeline(a, lookupID+3);
-											
-											table_2.setValueAt("WB", a, lookupID+4);
-											cycles.add(new Cycle());
-											//wbPipeline(a, lookupID+4);
+											else if (stall == true && tempCol > write)
+											{
+												System.out.println("TempCol is " + tempCol);
+												table_2.setValueAt("ID", a, tempCol+1);
+												cycles.add(new Cycle());
+												column = tempCol;
+												//idPipeline(a, tempCol+1);
+												
+												table_2.setValueAt("EX", a, tempCol+2);
+												cycles.add(new Cycle());
+												//exPipeline(a, tempCol+2);
+												
+												table_2.setValueAt("MEM", a, tempCol+3);
+												cycles.add(new Cycle());
+												//memPipeline(a, tempCol+3);
+												
+												table_2.setValueAt("WB", a, tempCol+4);
+												cycles.add(new Cycle());
+												//wbPipeline(a, tempCol+4);
+											}
 										}
-										
 									}
-									else if (stall == true && tempCol > write)
-									{
-										System.out.println("TempCol is " + tempCol);
-										table_2.setValueAt("ID", a, tempCol+1);
-										cycles.add(new Cycle());
-										column = tempCol;
-										//idPipeline(a, tempCol+1);
-										
-										table_2.setValueAt("EX", a, tempCol+2);
-										cycles.add(new Cycle());
-										//exPipeline(a, tempCol+2);
-										
-										table_2.setValueAt("MEM", a, tempCol+3);
-										cycles.add(new Cycle());
-										//memPipeline(a, tempCol+3);
-										
-										table_2.setValueAt("WB", a, tempCol+4);
-										cycles.add(new Cycle());
-										//wbPipeline(a, tempCol+4);
-									}
+									System.out.println("Printed everything else!");
+								}
+								else if (dependency == false && stall == false)
+								{
+									System.out.println("I am not dependent!");
+									table_2.setValueAt("ID", a, tempA+1);
+									cycles.add(new Cycle());
+									//idPipeline(a, tempA+1);
+									column = tempA;
+									
+									table_2.setValueAt("EX", a, tempA+2);
+									cycles.add(new Cycle());
+									//exPipeline(a, tempA+2);
+									
+									table_2.setValueAt("MEM", a, tempA+3);
+									cycles.add(new Cycle());
+									//memPipeline(a, tempA+3);
+									
+									table_2.setValueAt("WB", a, tempA+4);
+									cycles.add(new Cycle());
+									//wbPipeline(a, tempA+4);
+								}
+								else if (dependency == false && stall == true)
+								{
+									System.out.println("I am not dependent! B");
+									table_2.setValueAt("ID", a, tempCol+1);
+									cycles.add(new Cycle());
+									//idPipeline(a, tempCol+1);
+									column = tempCol;
+									
+									table_2.setValueAt("EX", a, tempCol+2);
+									cycles.add(new Cycle());
+									//exPipeline(a, tempCol+2);
+									
+									table_2.setValueAt("MEM", a, tempCol+3);
+									cycles.add(new Cycle());
+									//memPipeline(a, tempCol+3);
+									
+									table_2.setValueAt("WB", a, tempCol+4);
+									cycles.add(new Cycle());
+									//wbPipeline(a, tempCol+4);
 								}
 							}
-							System.out.println("Printed everything else!");
-						}
-						else if (dependency == false && stall == false)
-						{
-							System.out.println("I am not dependent!");
-							table_2.setValueAt("ID", a, tempA+1);
-							cycles.add(new Cycle());
-							//idPipeline(a, tempA+1);
-							column = tempA;
-							
-							table_2.setValueAt("EX", a, tempA+2);
-							cycles.add(new Cycle());
-							//exPipeline(a, tempA+2);
-							
-							table_2.setValueAt("MEM", a, tempA+3);
-							cycles.add(new Cycle());
-							//memPipeline(a, tempA+3);
-							
-							table_2.setValueAt("WB", a, tempA+4);
-							cycles.add(new Cycle());
-							//wbPipeline(a, tempA+4);
-						}
-						else if (dependency == false && stall == true)
-						{
-							System.out.println("I am not dependent! B");
-							table_2.setValueAt("ID", a, tempCol+1);
-							cycles.add(new Cycle());
-							//idPipeline(a, tempCol+1);
-							column = tempCol;
-							
-							table_2.setValueAt("EX", a, tempCol+2);
-							cycles.add(new Cycle());
-							//exPipeline(a, tempCol+2);
-							
-							table_2.setValueAt("MEM", a, tempCol+3);
-							cycles.add(new Cycle());
-							//memPipeline(a, tempCol+3);
-							
-							table_2.setValueAt("WB", a, tempCol+4);
-							cycles.add(new Cycle());
-							//wbPipeline(a, tempCol+4);
+							idPipeline(a, column+1);
+							exPipeline(a, column+2);
+							memPipeline(a, column+3);
+							wbPipeline(a, column+4);
 						}
 					}
 					
-					idPipeline(a, column+1);
-					exPipeline(a, column+2);
-					memPipeline(a, column+3);
-					wbPipeline(a, column+4);
 					
 					break;
 				case "LD":
@@ -1414,6 +1575,7 @@ public class main extends JFrame {
 							// NOTE: Gets label of branch
 							String label = code[a].split(" ")[1];
 							System.out.println(label);
+							codes.get(a).setBranchLabel(label);
 							
 							// NOTE: Assigns label and instruction to code
 							codes.get(a).setInst(instruction);
@@ -1459,6 +1621,7 @@ public class main extends JFrame {
 							// NOTE: Gets label of branch
 							String label = code[a].split(" ")[3];
 							System.out.println(label);
+							codes.get(a).setBranchLabel(label);
 							for (int b = 0; b < code.length; b++)
 							{
 								// NOTE: Hinahanap yung label sa lahat ng instructions

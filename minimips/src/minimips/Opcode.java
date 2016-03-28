@@ -685,16 +685,86 @@ public class Opcode {
 			this.inst = this.word.next().toString();
 			this.inst = this.word.next().toString();
 			System.out.println(this.inst);
-			this.output = this.generateOpcode(this.inst);
+			//this.output = this.generateOpcode(this.inst);
 			System.out.println(this.output);
+			
+			switch(this.inst.toUpperCase())
+			{
+				case "DADDU":
+				case "SLT":
+				case "SELEQZ":
+				case "DMULU":
+				case "DMUHU":
+				case "DADDIU":
+				case "BEQC":
+					if (codeLine.length != 5)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+						
+					break;
+				case "LD":
+				case "SD":
+					if(codeLine.length != 4)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+					break;
+				case "BC":
+					if (codeLine.length != 3)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+					break;
+			}
 		}
 		else 
 		{
 			this.inst = this.word.next().toString();
 			System.out.println("AKJDFHADSJFHAJD " + this.inst);
-			this.output = this.generateOpcode(this.inst);
+			//this.output = this.generateOpcode(this.inst);
 			System.out.println(this.output);
+			
+			switch(this.inst.toUpperCase())
+			{
+				case "DADDU":
+				case "SLT":
+				case "SELEQZ":
+				case "DMULU":
+				case "DMUHU":
+				case "DADDIU":
+				case "BEQC":
+					if (codeLine.length != 4)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+						
+					break;
+				case "LD":
+				case "SD":
+					if(codeLine.length != 3)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+					break;
+				case "BC":
+					if (codeLine.length != 2)
+					{
+						this.error = true;
+						this.errorMessage = "Kulang or sobra!";
+					}
+					break;
+			}
 		}
+		
+		if (error == false)
+			this.output = this.generateOpcode(this.inst);
+		
 		return this.output;
 	}
 	

@@ -16,6 +16,7 @@ public class Code {
 	private String line;
 	private int pcTarget;
 	private int pcInt;
+	private String branchLabel;
 	
 	// Getters and Setters
 	public String getPcHex() {
@@ -97,5 +98,11 @@ public class Code {
 		System.out.println("IMM -- " + this.imm);
 		System.out.println("LABEL -- " + this.label);
 		System.out.println("PC -- " + this.pcHex);
+	}
+	public String getBranchLabel() {
+		return branchLabel;
+	}
+	public void setBranchLabel(String branchLabel) {
+		this.branchLabel = branchLabel;
 	}
 }
