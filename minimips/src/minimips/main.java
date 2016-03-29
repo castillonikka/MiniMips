@@ -149,7 +149,7 @@ public class main extends JFrame {
 	
 	public void idPipeline(int codeIndex, int numCycles)
 	{
-		System.out.println("HERSHEYS " + numCycles);
+		//System.out.println("HERSHEYS " + numCycles);
 		
 		// NOTE: Kinukuha laman ni RS (aka register A)
 		System.out.println("CODE INDEX " + codeIndex);
@@ -244,7 +244,7 @@ public class main extends JFrame {
 	
 	public void exPipeline(int codeIndex, int numCycles)
 	{
-		System.out.println("EXECUTE THIS INSTRUCTIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOON " + codes.get(codeIndex).getInst().toUpperCase());
+		//System.out.println("EXECUTE THIS INSTRUCTIOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOON " + codes.get(codeIndex).getInst().toUpperCase());
 		switch(codes.get(codeIndex).getInst().toUpperCase())
 		{
 			case "BC":
@@ -305,7 +305,6 @@ public class main extends JFrame {
 				// NOTE: A + B
 				BigInteger ans = regA.add(regB);
 				System.out.println("Answer is " + ans.toString(16));
-				// Converts answer to hex -> stores answer in EX/MEM.ALU
 				cycles.get(numCycles).setEX_MEM_ALU(ans.toString(16));
 				// NOTE: Zero extend if needed
 				while (cycles.get(numCycles).getEX_MEM_ALU().length() < 16)
@@ -346,7 +345,7 @@ public class main extends JFrame {
 				break;
 				
 			case "SLT":
-				System.out.println("YAAAAAAAAAAAAAAAAAS SLT");
+				//System.out.println("YAAAAAAAAAAAAAAAAAS SLT");
 				// NOTE: Converts ID/EX.A to int
 				regA = new BigInteger(cycles.get(numCycles-1).getID_EX_A(), 16);
 				// NOTE: Converts ID/EX.B to in
@@ -362,7 +361,7 @@ public class main extends JFrame {
 				
 				if (regAA < regBB)
 					answer = 1;
-				System.out.println("REG A IS " + regAA + "\nREG B IS " + regBB + "\nANSWERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR " + answer);
+				//System.out.println("REG A IS " + regAA + "\nREG B IS " + regBB + "\nANSWERRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR " + answer);
 				// NOTE: Converted ans to hex -> EX/MEM.ALU gets ans
 				cycles.get(numCycles).setEX_MEM_ALU(Integer.toHexString(answer));
 				// NOTE: Zero extend if needed
@@ -374,7 +373,7 @@ public class main extends JFrame {
 				if (cycles.get(numCycles).getEX_MEM_ALU().length() > 16)
 					cycles.get(numCycles).setEX_MEM_ALU(cycles.get(numCycles).getEX_MEM_ALU().substring(Math.max(cycles.get(numCycles).getEX_MEM_ALU().length() - 16, 0)));
 				
-				System.out.println("ALUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU " + cycles.get(numCycles).getEX_MEM_ALU());
+				//System.out.println("ALUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU " + cycles.get(numCycles).getEX_MEM_ALU());
 				
 				// NOTE: EX/MEM.Cond = 0
 				cycles.get(numCycles).setEX_MEM_COND("0");
@@ -630,7 +629,7 @@ public class main extends JFrame {
 	public void pipeline(ArrayList<Code> codes)
 	{
 		int numCycles = 0;
-		System.out.println("NUM CYCLES!!!!!!!! INITIAL " + numCycles);
+		//System.out.println("NUM CYCLES!!!!!!!! INITIAL " + numCycles);
 		cycles.clear(); 								// NOTE: Inaalis lahat ng laman ng "cycles", parang reset
 		for (int x = 0; x < 100; x++)					// NOTE: Inaalis lahat ng laman ng pipeline map table, parang reset
 		{
@@ -656,7 +655,7 @@ public class main extends JFrame {
 				table_2.setValueAt("ID", a, a+1);
 				cycles.add(new Cycle());
 				numCycles++;
-				System.out.println("NUM CYCLES!!!!!!!! ID " + numCycles);
+				//System.out.println("NUM CYCLES!!!!!!!! ID " + numCycles);
 				idPipeline(a, numCycles);
 				
 				///////////////////////////////
@@ -680,11 +679,11 @@ public class main extends JFrame {
 				numCycles++;
 				wbPipeline(a, numCycles);
 				
-				System.out.println("PRINTED FIRST INST");
+				//System.out.println("PRINTED FIRST INST");
 			}
 			else if (jumpCheck == true)
 			{
-				//int temp = jump - a - 1;
+		
 				System.out.println("PREV A: " + a);
 				System.out.println("JUMP: " + jump);
 				a = jump;
@@ -699,7 +698,7 @@ public class main extends JFrame {
 						
 				}
 				
-				//System.out.println("BRANCH LABEL: " + codes.get(2).getBranchLabel());
+				
 				System.out.println("A IS NOW: " + a);
 				System.out.println("TEMP IS: " + temp);
 				System.out.println("COL IS: " + col);
@@ -718,7 +717,7 @@ public class main extends JFrame {
 				while (table_2.getValueAt(a-1, tempA).toString().equals("IF") || table_2.getValueAt(a-1, tempA).toString().equals(""))
 				{
 					tempA++;
-					//table_2.setValueAt("IF", a, tempA+1);
+					
 				}
 				System.out.println("TempA is " + tempA);
 				table_2.setValueAt("IF", a, tempA);
@@ -736,17 +735,17 @@ public class main extends JFrame {
 					table_2.setValueAt("*", a, tempCol);
 					tempCol++;
 				}
-				System.out.println("Printed stalls!");
+				//System.out.println("Printed stalls!");
 				while (table_2.getValueAt(a-1, tempCol).toString().equals("IF") || table_2.getValueAt(a-1, tempCol).toString().equals("") || table_2.getValueAt(a-1, tempCol).toString().equals("*"))
 				{
 					tempCol++;
-					//table_2.setValueAt("IF", a, tempCol);
+				
 				}
 				table_2.setValueAt("IF", a, tempCol);
 				ifPipeline(a, tempCol);
 				System.out.println("Fetch! TempCol is " + tempCol);
 			}
-			System.out.println("HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + codes.get(a).getInst().toUpperCase());
+			//System.out.println("HELLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO " + codes.get(a).getInst().toUpperCase());
 			int column = 0;
 			switch(codes.get(a).getInst().toUpperCase())
 			{
@@ -826,7 +825,7 @@ public class main extends JFrame {
 									offset = Integer.parseInt(offsetBin, 2);
 									break;
 							}
-							//jump = a + offset;
+							
 							
 							int i = 0;
 							for (i = 0; i < codes.size(); i++)
@@ -885,7 +884,7 @@ public class main extends JFrame {
 							jump = 0;
 							for (int b = 0; b < a; b++)
 							{
-								System.out.println("Entered loop!");
+								//System.out.println("Entered loop!");
 								System.out.println("Dependency is " + dependency);
 								System.out.println("Stall is " + stall);
 								System.out.println("Current RS is " + codes.get(a).getRs());
@@ -952,10 +951,7 @@ public class main extends JFrame {
 												numStalls = write - start;
 												d = numStalls;
 												System.out.println("Number of stalls should be " + d);
-												/*for (int x = a; x <= c; x++)
-												{
-													table_2.setValueAt("*", a, x);
-												}*/
+											
 												if (numStalls > 0)
 												{
 													while (numStalls > 0)
@@ -965,20 +961,20 @@ public class main extends JFrame {
 													}
 													table_2.setValueAt("ID", a, write+1);
 													cycles.add(new Cycle());
-													//idPipeline(a, write+1);
+													
 													column = write;
 													
 													table_2.setValueAt("EX", a, write+2);
 													cycles.add(new Cycle());
-													//exPipeline(a, write+2);
+												
 													
 													table_2.setValueAt("MEM", a, write+3);
 													cycles.add(new Cycle());
-													//memPipeline(a, write+3);
+												
 													
 													table_2.setValueAt("WB", a, write+4);
 													cycles.add(new Cycle());
-													//wbPipeline(a, write+4);
+												
 												}
 												else
 												{
@@ -995,19 +991,19 @@ public class main extends JFrame {
 													
 													table_2.setValueAt("ID", a, lookupID+1);
 													cycles.add(new Cycle());
-													//idPipeline(a, lookupID+1);
+												
 													
 													table_2.setValueAt("EX", a, lookupID+2);
 													cycles.add(new Cycle());
-													//exPipeline(a, lookupID+2);
+													
 													
 													table_2.setValueAt("MEM", a, lookupID+3);
 													cycles.add(new Cycle());
-													//memPipeline(a, lookupID+3);
+												
 													
 													table_2.setValueAt("WB", a, lookupID+4);
 													cycles.add(new Cycle());
-													//wbPipeline(a, lookupID+4);
+													
 												}
 												
 											}
@@ -1017,63 +1013,63 @@ public class main extends JFrame {
 												table_2.setValueAt("ID", a, tempCol+1);
 												cycles.add(new Cycle());
 												column = tempCol;
-												//idPipeline(a, tempCol+1);
+												
 												
 												table_2.setValueAt("EX", a, tempCol+2);
 												cycles.add(new Cycle());
-												//exPipeline(a, tempCol+2);
+												
 												
 												table_2.setValueAt("MEM", a, tempCol+3);
 												cycles.add(new Cycle());
-												//memPipeline(a, tempCol+3);
+												
 												
 												table_2.setValueAt("WB", a, tempCol+4);
 												cycles.add(new Cycle());
-												//wbPipeline(a, tempCol+4);
+												
 											}
 										}
 									}
-									System.out.println("Printed everything else!");
+									//System.out.println("Printed everything else!");
 								}
 								else if (dependency == false && stall == false)
 								{
 									System.out.println("I am not dependent!");
 									table_2.setValueAt("ID", a, tempA+1);
 									cycles.add(new Cycle());
-									//idPipeline(a, tempA+1);
+									
 									column = tempA;
 									
 									table_2.setValueAt("EX", a, tempA+2);
 									cycles.add(new Cycle());
-									//exPipeline(a, tempA+2);
+								
 									
 									table_2.setValueAt("MEM", a, tempA+3);
 									cycles.add(new Cycle());
-									//memPipeline(a, tempA+3);
+									
 									
 									table_2.setValueAt("WB", a, tempA+4);
 									cycles.add(new Cycle());
-									//wbPipeline(a, tempA+4);
+									
 								}
 								else if (dependency == false && stall == true)
 								{
 									System.out.println("I am not dependent! B");
 									table_2.setValueAt("ID", a, tempCol+1);
 									cycles.add(new Cycle());
-									//idPipeline(a, tempCol+1);
+									
 									column = tempCol;
 									
 									table_2.setValueAt("EX", a, tempCol+2);
 									cycles.add(new Cycle());
-									//exPipeline(a, tempCol+2);
+									
 									
 									table_2.setValueAt("MEM", a, tempCol+3);
 									cycles.add(new Cycle());
-									//memPipeline(a, tempCol+3);
+									
 									
 									table_2.setValueAt("WB", a, tempCol+4);
 									cycles.add(new Cycle());
-									//wbPipeline(a, tempCol+4);
+									
 								}
 							}
 							idPipeline(a, column+1);
@@ -1089,7 +1085,7 @@ public class main extends JFrame {
 				case "DADDIU":
 					for (int b = 0; b < a; b++)
 					{
-						System.out.println("Entered loop!");
+						//System.out.println("Entered loop!");
 						System.out.println("Dependency is " + dependency);
 						System.out.println("Stall is " + stall);
 						if
@@ -1141,46 +1137,46 @@ public class main extends JFrame {
 										}
 										table_2.setValueAt("ID", a, write+1);
 										cycles.add(new Cycle());
-										//idPipeline(a, write+1);
+									
 										column = write;
 										
 										table_2.setValueAt("EX", a, write+2);
 										cycles.add(new Cycle());
-										//exPipeline(a, write+2);
+								
 										
 										table_2.setValueAt("MEM", a, write+3);
 										cycles.add(new Cycle());
-										//memPipeline(a, write+3);
+										
 										
 										table_2.setValueAt("WB", a, write+4);
 										cycles.add(new Cycle());
-										//wbPipeline(a, write+4);
+										
 									}
 									else if (stall == true && tempCol > write)
 									{
 										System.out.println("TempCol is " + tempCol);
 										table_2.setValueAt("ID", a, tempCol+1);
 										cycles.add(new Cycle());
-										//idPipeline(a, tempCol+1);
+										
 										column = tempCol;
 										
 										table_2.setValueAt("EX", a, tempCol+2);
 										cycles.add(new Cycle());
-										//exPipeline(a, tempCol+2);
+										
 										
 										table_2.setValueAt("MEM", a, tempCol+3);
 										cycles.add(new Cycle());
-										//memPipeline(a, tempCol+3);
+										
 										
 										table_2.setValueAt("WB", a, tempCol+4);
 										cycles.add(new Cycle());
-										//wbPipeline(a, tempCol+4);
+										
 									}
 								}
 								
 								//System.out.println("Printed everything else!");
 							}
-							System.out.println("Printed everything else!");
+							//System.out.println("Printed everything else!");
 						}
 						else if (dependency == false && stall == false)
 						{
@@ -1188,19 +1184,19 @@ public class main extends JFrame {
 							table_2.setValueAt("ID", a, tempA+1);
 							cycles.add(new Cycle());
 							column = tempA;
-							//idPipeline(a, tempA+1);
+							
 							
 							table_2.setValueAt("EX", a, tempA+2);
 							cycles.add(new Cycle());
-							//exPipeline(a, tempA+2);
+							
 							
 							table_2.setValueAt("MEM", a, tempA+3);
 							cycles.add(new Cycle());
-							//memPipeline(a, tempA+3);
+							
 							
 							table_2.setValueAt("WB", a, tempA+4);
 							cycles.add(new Cycle());
-							//wbPipeline(a, tempA+4);
+							
 						}
 						else if (dependency == false && stall == true)
 						{
@@ -1208,19 +1204,19 @@ public class main extends JFrame {
 							table_2.setValueAt("ID", a, tempCol+1);
 							cycles.add(new Cycle());
 							column = tempCol;
-							//idPipeline(a, tempCol+1);
+							
 							
 							table_2.setValueAt("EX", a, tempCol+2);
 							cycles.add(new Cycle());
-							//exPipeline(a, tempCol+2);
+							
 							
 							table_2.setValueAt("MEM", a, tempCol+3);
 							cycles.add(new Cycle());
-							//memPipeline(a, tempCol+3);
+							
 							
 							table_2.setValueAt("WB", a, tempCol+4);
 							cycles.add(new Cycle());
-							//wbPipeline(a, tempCol+4);
+							
 						}
 					}
 					
@@ -1234,7 +1230,7 @@ public class main extends JFrame {
 				case "BEQC":
 					for (int b = 0; b < a; b++)
 					{
-						System.out.println("Entered loop!");
+						//System.out.println("Entered loop!");
 						System.out.println("Dependency is " + dependency);
 						System.out.println("Stall is " + stall);
 						if
@@ -1324,24 +1320,24 @@ public class main extends JFrame {
 										table_2.setValueAt("ID", a, write+1);
 										cycles.add(new Cycle());
 										column = write;
-										//idPipeline(a, write+1);
+										
 										
 										table_2.setValueAt("EX", a, write+2);
 										cycles.add(new Cycle());
-										//exPipeline(a, write+2);
+										
 										
 										table_2.setValueAt("MEM", a, write+3);
 										cycles.add(new Cycle());
-										//memPipeline(a, write+3);
+									
 										
 										table_2.setValueAt("WB", a, write+4);
 										cycles.add(new Cycle());
-										//wbPipeline(a, write+4);
+										
 									}
 								}
 								
 							}
-							System.out.println("Printed everything else!");
+							//System.out.println("Printed everything else!");
 						}
 						else if (dependency == false && stall == false)
 						{
@@ -1349,19 +1345,19 @@ public class main extends JFrame {
 							table_2.setValueAt("ID", a, tempA+1);
 							cycles.add(new Cycle());
 							column = tempA;
-							///idPipeline(a, tempA+1);
+							
 							
 							table_2.setValueAt("EX", a, tempA+2);
 							cycles.add(new Cycle());
-							//exPipeline(a, tempA+2);
+							
 							
 							table_2.setValueAt("MEM", a, tempA+3);
 							cycles.add(new Cycle());
-							//memPipeline(a, tempA+3);
+							
 							
 							table_2.setValueAt("WB", a, tempA+4);
 							cycles.add(new Cycle());
-							//wbPipeline(a, tempA+4);
+							
 						}
 						else if (dependency == false && stall == true)
 						{
@@ -1369,19 +1365,19 @@ public class main extends JFrame {
 							table_2.setValueAt("ID", a, tempCol+1);
 							cycles.add(new Cycle());
 							column = tempCol;
-							//idPipeline(a, tempCol+1);
+							
 							
 							table_2.setValueAt("EX", a, tempCol+2);
 							cycles.add(new Cycle());
-							//exPipeline(a, tempCol+2);
+						
 							
 							table_2.setValueAt("MEM", a, tempCol+3);
 							cycles.add(new Cycle());
-							//memPipeline(a, tempCol+3);
+							
 							
 							table_2.setValueAt("WB", a, tempCol+4);
 							cycles.add(new Cycle());
-							//wbPipeline(a, tempCol+4);
+							
 						}
 					}
 					
@@ -1758,11 +1754,7 @@ public class main extends JFrame {
 					if (table_2.getValueAt(codes.size()-1, a).toString().equals("WB"))
 						break;
 				}
-				/*for (int x = 0; x <= a; x++)
-				{
-					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
-					textArea.append(display);
-				}*/
+			
 				display = "\nCYCLE " + (a+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(a).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(a).getIF_ID_NPC() + "\nPC = " + cycles.get(a).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(a).getID_EX_A() + "\nID/EX.B = " + cycles.get(a).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(a).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(a).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(a).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(a).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(a).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(a).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(a).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(a).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(a).getWbDisplay() + "\n~~~~~~~~~~~~~";
 				textArea.setCaretPosition(0);
 				textArea.setText(display);
@@ -2133,7 +2125,7 @@ public class main extends JFrame {
 				String[] cycle = new String[50];
 				cycle = textArea.getText().split("\\n");
 				String[] line = cycle[1].split(" ");
-				//System.out.println("Line: " + line[1]);
+				
 				int cycleNum = Integer.parseInt(line[1]);
 				System.out.println("Cycle Number: " + cycleNum);
 				
@@ -2156,7 +2148,7 @@ public class main extends JFrame {
 				String[] cycle = new String[50];
 				cycle = textArea.getText().split("\\n");
 				String[] line = cycle[1].split(" ");
-				//System.out.println("Line: " + line[1]);
+				
 				int cycleNum = Integer.parseInt(line[1]);
 				System.out.println("Cycle Number: " + cycleNum);
 				
