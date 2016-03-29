@@ -59,6 +59,7 @@ public class main extends JFrame {
 	private int tempCol, tempA;
 	private int jump;
 	private int arvin;
+	private JTextField textField;
 
 	/**
 	 * Launch the application.
@@ -1404,8 +1405,9 @@ public class main extends JFrame {
 	 * Create the frame.
 	 */
 	public main() {
+		setResizable(false);
 		
-		setTitle("mH1nh1m1pSxZc");
+		setTitle("MiniMips");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 631, 551);
 		
@@ -1880,6 +1882,64 @@ public class main extends JFrame {
 		});
 		btnInitializeData.setBounds(377, 420, 137, 23);
 		panel.add(btnInitializeData);
+		
+		JButton btnNewButton_1 = new JButton("Go");
+		btnNewButton_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				String input = textField.getText().toUpperCase();
+				boolean goError = false;
+				
+				if (input.length() != 4)
+					goError = true;
+				else 
+				{
+					for (int b = 0; b < 4; b++)	
+					{
+						if (input.charAt(b) != '0' && input.charAt(b) != '1' && input.charAt(b) != '2' && input.charAt(b) != '3' && input.charAt(b) != '4' && input.charAt(b) != '5' && input.charAt(b) != '6' &&
+								input.charAt(b) != '7' && input.charAt(b) != '8' && input.charAt(b) != '9' && input.charAt(b) != 'A' && input.charAt(b) != 'B' && input.charAt(b) != 'C' && input.charAt(b) != 'D' &&
+								input.charAt(b) != 'E' && input.charAt(b) != 'F')
+						{
+							goError = true;
+							break;
+						}
+					}
+					
+					if (goError == false)
+					{
+						int min = Integer.parseInt("2000", 16);
+						int max = Integer.parseInt("3FFF", 16);
+						int inp = Integer.parseInt(input, 16);
+						
+						if (inp < min)
+							goError = true;
+						else if (inp > max)
+							goError = true;
+					}
+					
+				}
+				
+				if (goError == true)
+					JOptionPane.showMessageDialog(new JFrame(), "Error!");
+				else
+				{
+					int a = 0;
+					for (a = 0; a < 8192; a++)
+					{
+						if (data.get(a).getAddressHex().equals(input))
+							break;
+					}
+					table_1.scrollRectToVisible(table_1.getCellRect(a, 0, true));
+				}
+				
+			}
+		});
+		btnNewButton_1.setBounds(511, 234, 57, 23);
+		panel.add(btnNewButton_1);
+		
+		textField = new JTextField();
+		textField.setBounds(377, 235, 124, 20);
+		panel.add(textField);
+		textField.setColumns(10);
 		JScrollPane scrollPane_4 = new JScrollPane();
 		scrollPane_4.setBounds(305, 51, 272, 128);
 		panel_1.add(scrollPane_4);
