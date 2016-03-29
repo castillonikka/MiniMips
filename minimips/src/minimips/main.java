@@ -825,8 +825,16 @@ public class main extends JFrame {
 									offset = Integer.parseInt(offsetBin, 2);
 									break;
 							}
-							jump = a + offset; 
+							//jump = a + offset;
 							
+							int i = 0;
+							for (i = 0; i < codes.size(); i++)
+							{
+								if (codes.get(a-1).getBranchLabel() != null)
+									if (codes.get(a-1).getBranchLabel().equals(codes.get(i).getLabel()))
+										break;
+							}
+							jump = i;
 							if (offset == 0)
 							{
 								table_2.setValueAt("ID", a, col+1);
