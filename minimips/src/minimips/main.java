@@ -826,8 +826,16 @@ public class main extends JFrame {
 									offset = Integer.parseInt(offsetBin, 2);
 									break;
 							}
-							jump = a + offset; 
+							//jump = a + offset;
 							
+							int i = 0;
+							for (i = 0; i < codes.size(); i++)
+							{
+								if (codes.get(a-1).getBranchLabel() != null)
+									if (codes.get(a-1).getBranchLabel().equals(codes.get(i).getLabel()))
+										break;
+							}
+							jump = i;
 							if (offset == 0)
 							{
 								table_2.setValueAt("ID", a, col+1);
@@ -857,9 +865,13 @@ public class main extends JFrame {
 							System.out.println("ARVIN :) " + arvin);
 							
 							table_2.setValueAt("ID", a, arvin+1);
+							cycles.add(new Cycle());
 							table_2.setValueAt("EX", a, arvin+2);
+							cycles.add(new Cycle());
 							table_2.setValueAt("MEM", a, arvin+3);
+							cycles.add(new Cycle());
 							table_2.setValueAt("WB", a, arvin+4);
+							cycles.add(new Cycle());
 							
 							column = arvin;
 							
@@ -1752,7 +1764,9 @@ public class main extends JFrame {
 					textArea.append(display);
 				}*/
 				display = "\nCYCLE " + (a+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(a).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(a).getIF_ID_NPC() + "\nPC = " + cycles.get(a).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(a).getID_EX_A() + "\nID/EX.B = " + cycles.get(a).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(a).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(a).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(a).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(a).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(a).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(a).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(a).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(a).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(a).getWbDisplay() + "\n~~~~~~~~~~~~~";
+				textArea.setCaretPosition(0);
 				textArea.setText(display);
+				
 			}
 		});
 		
@@ -2129,6 +2143,7 @@ public class main extends JFrame {
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.setText(display);
+					textArea.setCaretPosition(0);
 				}
 			}
 		});
@@ -2145,7 +2160,7 @@ public class main extends JFrame {
 				int cycleNum = Integer.parseInt(line[1]);
 				System.out.println("Cycle Number: " + cycleNum);
 				
-				int x = cycleNum + 1;
+				int x = cycleNum;
 				System.out.println("X is: " + x);
 				
 				int a = 0;
@@ -2157,10 +2172,11 @@ public class main extends JFrame {
 				
 				System.out.println("A is: " + a);
 				
-				if (x < a)
+				if (x <= a)
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.setText(display);
+					textArea.setCaretPosition(0);
 				}
 			}
 		});
