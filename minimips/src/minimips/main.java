@@ -1762,7 +1762,9 @@ public class main extends JFrame {
 					textArea.append(display);
 				}*/
 				display = "\nCYCLE " + (a+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(a).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(a).getIF_ID_NPC() + "\nPC = " + cycles.get(a).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(a).getID_EX_A() + "\nID/EX.B = " + cycles.get(a).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(a).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(a).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(a).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(a).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(a).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(a).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(a).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(a).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(a).getWbDisplay() + "\n~~~~~~~~~~~~~";
+				textArea.setCaretPosition(0);
 				textArea.setText(display);
+				
 			}
 		});
 		
@@ -2081,6 +2083,7 @@ public class main extends JFrame {
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.setText(display);
+					textArea.setCaretPosition(0);
 				}
 			}
 		});
@@ -2113,6 +2116,7 @@ public class main extends JFrame {
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.setText(display);
+					textArea.setCaretPosition(0);
 				}
 			}
 		});
