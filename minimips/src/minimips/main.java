@@ -856,9 +856,13 @@ public class main extends JFrame {
 							System.out.println("ARVIN :) " + arvin);
 							
 							table_2.setValueAt("ID", a, arvin+1);
+							cycles.add(new Cycle());
 							table_2.setValueAt("EX", a, arvin+2);
+							cycles.add(new Cycle());
 							table_2.setValueAt("MEM", a, arvin+3);
+							cycles.add(new Cycle());
 							table_2.setValueAt("WB", a, arvin+4);
+							cycles.add(new Cycle());
 							
 							column = arvin;
 							
@@ -2085,7 +2089,7 @@ public class main extends JFrame {
 				int cycleNum = Integer.parseInt(line[1]);
 				System.out.println("Cycle Number: " + cycleNum);
 				
-				int x = cycleNum + 1;
+				int x = cycleNum;
 				System.out.println("X is: " + x);
 				
 				int a = 0;
@@ -2097,7 +2101,7 @@ public class main extends JFrame {
 				
 				System.out.println("A is: " + a);
 				
-				if (x < a)
+				if (x <= a)
 				{
 					display = "\nCYCLE " + (x+1) + "\nInstruction Fetch\nIF/ID.IR = " + cycles.get(x).getIF_ID_IR() + "\nIF/ID.NPC = " + cycles.get(x).getIF_ID_NPC() + "\nPC = " + cycles.get(x).getPC() + "\n\nInstruction Decode\nID/EX.A = " + cycles.get(x).getID_EX_A() + "\nID/EX.B = " + cycles.get(x).getID_EX_B() + "\nID/EX.IMM = " + cycles.get(x).getID_EX_IMM() + "\nID/EX.IR = " + cycles.get(x).getID_EX_IR() + "\nID/EX.NPC = " + cycles.get(x).getID_EX_NPC() + "\n\nExecution\nEX/MEM.ALUoutput = " + cycles.get(x).getEX_MEM_ALU() + "\nEX/MEM.IR = " + cycles.get(x).getEX_MEM_IR() + "\nEX/MEM.Cond = " + cycles.get(x).getEX_MEM_COND() + "\n\nMemory Access\nMEM/WB.LMD = " + cycles.get(x).getMEM_WB_LMD() + "\nMEM/WB.IR = " + cycles.get(x).getMEM_WB_IR() + "\n\nWrite-Back\n" + cycles.get(x).getWbDisplay() + "\n~~~~~~~~~~~~~";
 					textArea.setText(display);
